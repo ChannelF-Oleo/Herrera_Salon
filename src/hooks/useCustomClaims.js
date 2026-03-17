@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { refreshUserClaims } from '../services/bookingService';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '../config/firebase';
 import { forceTokenRefresh } from '../utils/tokenRefresh';
+
+// Función para llamar a refreshUserClaims
+const refreshUserClaimsFunction = httpsCallable(functions, 'refreshUserClaims');
 
 /**
  * Custom hook to manage user custom claims
@@ -46,7 +50,7 @@ export const useCustomClaims = () => {
       setError(null);
       
       // Call Cloud Function to refresh claims in backend
-      await refreshUserClaims();
+      await refreshUserClaimsFunction();
       
       // Force token refresh to get updated claims
       const token = await forceTokenRefresh();

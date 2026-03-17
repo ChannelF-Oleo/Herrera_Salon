@@ -3,21 +3,21 @@
    ========================================= */
 
 :root {
-  /* Services specific colors */
-  --services-card-bg: #ffffff;
-  --services-card-border: rgba(0, 0, 0, 0.05);
-  --services-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --services-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.15);
-  --services-search-bg: #ffffff;
-  --services-search-border: rgba(0, 0, 0, 0.08);
+  /* Services specific colors - usando paleta global */
+  --services-card-bg: var(--optic-white);
+  --services-card-border: rgba(166, 124, 82, 0.08);
+  --services-card-shadow: var(--shadow-sm);
+  --services-card-shadow-hover: var(--shadow-lg);
+  --services-search-bg: var(--optic-white);
+  --services-search-border: rgba(166, 124, 82, 0.1);
   
-  /* Dark theme overrides */
-  --dark-services-card-bg: rgba(31, 41, 55, 0.8);
-  --dark-services-card-border: rgba(75, 85, 99, 0.3);
-  --dark-services-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --dark-services-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.5);
-  --dark-services-search-bg: rgba(31, 41, 55, 0.8);
-  --dark-services-search-border: rgba(75, 85, 99, 0.4);
+  /* Dark theme overrides - usando paleta global */
+  --dark-services-card-bg: var(--carbon-soft);
+  --dark-services-card-border: rgba(166, 124, 82, 0.2);
+  --dark-services-card-shadow: var(--shadow-md);
+  --dark-services-card-shadow-hover: var(--shadow-xl);
+  --dark-services-search-bg: var(--carbon-soft);
+  --dark-services-search-border: rgba(166, 124, 82, 0.3);
 }
 
 .services-view {

@@ -3,6 +3,7 @@ import Portal from "../components/ui/Portal";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { Image, Search, Filter, Eye, X } from "lucide-react";
+import "../styles/Gallery.css";
 
 // 1. MOVÍ ESTO AFUERA: Optimización para que no se re-cree en cada render
 const getFallbackImages = () => [
@@ -155,10 +156,10 @@ const Gallery = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-24 pb-8">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="gallery-loading">
+        <div className="gallery-container">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
           </div>
         </div>
       </div>
@@ -166,43 +167,43 @@ const Gallery = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-8">
-      <div className="container mx-auto px-4">
+    <div className="gallery-main">
+      <div className="gallery-container">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Image className="w-10 h-10 text-purple-600" />
+        <div className="gallery-header">
+          <div className="gallery-icon-container">
+            <Image className="gallery-icon" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Galería D'Galú
+          <h1 className="gallery-title">
+            Portafolio Herrera Beauty Studio
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="gallery-description">
             Descubre nuestros trabajos más destacados y déjate inspirar por la belleza y el arte
           </p>
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="gallery-filters">
+          <div className="filters-container">
             {/* Búsqueda */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="search-container">
+              <Search className="search-icon" />
               <input
                 type="text"
                 placeholder="Buscar en la galería..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="search-input"
               />
             </div>
 
             {/* Filtro de categoría */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-400" />
+            <div className="category-filter-container">
+              <Filter className="filter-icon" />
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="category-select"
               >
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
@@ -215,8 +216,8 @@ const Gallery = () => {
         </div>
 
         {/* Contador de resultados */}
-        <div className="mb-6">
-          <p className="text-gray-600">
+        <div className="results-counter">
+          <p>
             Mostrando {filteredImages.length} de {images.length} imágenes
             {searchTerm && ` para "${searchTerm}"`}
           </p>
@@ -224,46 +225,44 @@ const Gallery = () => {
 
         {/* Grid de imágenes */}
         {filteredImages.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="gallery-grid">
             {filteredImages.map((image) => (
               <div
                 key={image.id}
-                className="group relative bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                className="gallery-card"
                 onClick={() => openImageModal(image)}
               >
-                <div className="aspect-square overflow-hidden">
+                <div className="gallery-card-image-container">
                   <img
                     src={image.imageUrl}
                     alt={image.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="gallery-card-image"
                   />
                 </div>
                 
                 {/* Overlay con información */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center text-white p-4">
-                    <Eye className="w-8 h-8 mx-auto mb-2" />
-                    <h3 className="font-semibold text-sm mb-1">{image.title}</h3>
-                    <p className="text-xs opacity-90 line-clamp-2">{image.description}</p>
+                <div className="gallery-card-overlay">
+                  <div className="gallery-card-overlay-content">
+                    <Eye className="overlay-eye-icon" />
+                    <h3 className="overlay-title">{image.title}</h3>
+                    <p className="overlay-description">{image.description}</p>
                   </div>
                 </div>
 
                 {/* Categoría */}
-                <div className="absolute top-2 left-2">
-                  <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-medium">
-                    {categories.find(cat => cat.id === image.category)?.name || image.category}
-                  </span>
+                <div className="gallery-card-category">
+                  {categories.find(cat => cat.id === image.category)?.name || image.category}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <Image className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <div className="gallery-empty">
+            <Image className="empty-icon" />
+            <h3 className="empty-title">
               No se encontraron imágenes
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="empty-description">
               Intenta ajustar los filtros de búsqueda
             </p>
             <button
@@ -271,7 +270,7 @@ const Gallery = () => {
                 setSearchTerm("");
                 setSelectedCategory("all");
               }}
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
+              className="clear-filters-btn"
             >
               Limpiar Filtros
             </button>
@@ -282,48 +281,43 @@ const Gallery = () => {
       {/* Modal de imagen */}
       {selectedImage && (
         <Portal>
-          <div className="flex items-center justify-center p-4 bg-black bg-opacity-75 fixed inset-0 z-50">
-            <div className="relative max-w-4xl w-full max-h-[90vh] bg-white rounded-lg overflow-y-auto">
+          <div className="image-modal-backdrop">
+            <div className="image-modal-container">
               <button
                 onClick={closeImageModal}
-                className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-colors"
+                className="modal-close-btn"
               >
                 <X size={20} />
               </button>
               
-              <div className="flex flex-col md:flex-row">
-                <div className="md:w-2/3">
+              <div className="modal-content">
+                <div className="modal-image-container">
                   <img
                     src={selectedImage.imageUrl}
                     alt={selectedImage.title}
-                    className="w-full h-auto object-cover"
+                    className="modal-image"
                   />
                 </div>
                 
-                <div className="md:w-1/3 p-6">
-                  <div className="mb-4">
-                    <span className="bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full font-medium">
-                      {categories.find(cat => cat.id === selectedImage.category)?.name || selectedImage.category}
-                    </span>
+                <div className="modal-info">
+                  <div className="modal-category">
+                    {categories.find(cat => cat.id === selectedImage.category)?.name || selectedImage.category}
                   </div>
                   
-                  <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                  <h2 className="modal-title">
                     {selectedImage.title}
                   </h2>
                   
-                  <p className="text-gray-600 mb-4">
+                  <p className="modal-description">
                     {selectedImage.description}
                   </p>
                   
                   {selectedImage.tags && selectedImage.tags.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">Tags:</h4>
-                      <div className="flex flex-wrap gap-2">
+                    <div className="modal-tags-section">
+                      <h4 className="modal-tags-title">Tags:</h4>
+                      <div className="modal-tags">
                         {selectedImage.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
-                          >
+                          <span key={index} className="modal-tag">
                             #{tag}
                           </span>
                         ))}
@@ -331,7 +325,7 @@ const Gallery = () => {
                     </div>
                   )}
                   
-                  <div className="text-sm text-gray-500">
+                  <div className="modal-date">
                     {selectedImage.createdAt && (
                       <p>Fecha: {selectedImage.createdAt.toLocaleDateString()}</p>
                     )}

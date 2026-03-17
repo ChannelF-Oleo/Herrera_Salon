@@ -1,27 +1,62 @@
 // src/pages/Services/ServicesList.jsx
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../config/firebase"; // Ajusta la ruta si es necesario
-import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigateWithScroll } from "../../hooks/useNavigateWithScroll";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../../config/firebase";
+import { ArrowRight, Sparkles, Clock, DollarSign, Search, ChevronDown } from "lucide-react";
+import "../../styles/ServicesList.css";
 
+// Imagen hero para servicios
+import servicesHeroImage from "../../assets/images/hero_image.jpeg";
 
 const ServicesList = () => {
   const [services, setServices] = useState([]);
+  const [filteredServices, setFilteredServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const navigateWithScroll = useNavigateWithScroll();
+
+  // Categorías disponibles
+  const categories = [
+    "Todos",
+    "Manicura/Pedicura",
+    "Peluquería", 
+    "Maquillaje",
+    "Depilación",
+    "Spa/Bienestar",
+    "Pestañas/Cejas"
+  ];
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "services"));
+        const servicesRef = collection(db, "services");
+        const q = query(servicesRef, orderBy("name", "asc"));
+        const querySnapshot = await getDocs(q);
+        
         const servicesData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+        
         setServices(servicesData);
+        setFilteredServices(servicesData);
       } catch (error) {
         console.error("Error obteniendo servicios:", error);
+        // Fallback sin orderBy
+        try {
+          const fallbackSnapshot = await getDocs(collection(db, "services"));
+          const fallbackData = fallbackSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setServices(fallbackData);
+          setFilteredServices(fallbackData);
+        } catch (fallbackError) {
+          console.error("Fallback también falló:", fallbackError);
+        }
       } finally {
         setLoading(false);
       }
@@ -30,86 +65,204 @@ const ServicesList = () => {
     fetchServices();
   }, []);
 
+  // Filtrar servicios
+  useEffect(() => {
+    let filtered = services;
+
+    // Filtrar por categoría
+    if (selectedCategory !== "Todos") {
+      filtered = filtered.filter(service => service.category === selectedCategory);
+    }
+
+    // Filtrar por búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(service =>
+        service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredServices(filtered);
+  }, [services, searchTerm, selectedCategory]);
+
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.filter-dropdown')) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const ServiceCard = ({ service }) => (
+    <div
+      className="service-card group"
+      onClick={() => navigateWithScroll(`/services/${service.id}`)}
+    >
+      {/* Imagen del servicio */}
+      <div className="service-card-image-wrapper">
+        <img
+          src={service.image || servicesHeroImage}
+          alt={service.name}
+          className="service-card-image"
+        />
+
+        {/* Contador de subservicios */}
+        {service.subservices && service.subservices.length > 0 && (
+          <div className="service-card-count">
+            <Sparkles size={12} />
+            <span>{service.subservices.length} opciones</span>
+          </div>
+        )}
+      </div>
+
+      {/* Contenido de la card */}
+      <div className="service-card-content">
+        <h3 className="service-card-title">{service.name}</h3>
+        
+        <p className="service-card-description">
+          {service.description || "Servicio profesional de belleza"}
+        </p>
+
+        {/* Información del servicio */}
+        <div className="service-card-info">
+          <div className="service-info-item">
+            <DollarSign size={14} />
+            <span>Desde ${service.price}</span>
+          </div>
+          <div className="service-info-item">
+            <Clock size={14} />
+            <span>{service.duration} min</span>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="service-card-cta">
+          <span>Ver detalles</span>
+          <ArrowRight size={16} />
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-rose-50">
-        <div className="text-rose-500 text-xl font-serif animate-pulse">
-          Cargando belleza... ✨
+      <div className="services-loading">
+        <div className="loading-content">
+          <Sparkles className="loading-icon" size={48} />
+          <h2>Cargando servicios...</h2>
+          <p>Preparando nuestros tratamientos de belleza</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-12 px-4 sm:px-6 lg:px-8">
-      {/* HEADER */}
-      <div className="text-center max-w-3xl mx-auto mb-16">
-        <span className="text-rose-500 font-semibold tracking-wider uppercase text-sm">
-          Nuestro Menú
-        </span>
-        <h1 className="mt-2 text-4xl font-serif font-bold text-gray-900 sm:text-5xl">
-          Servicios Exclusivos
-        </h1>
-        <p className="mt-4 text-xl text-gray-500">
-          Descubre nuestra gama completa de tratamientos diseñados para realzar tu belleza natural.
-        </p>
-      </div>
+    <main className="services-page">
+      {/* Sección de filtros y servicios */}
+      <section className="services-content">
+        <div className="container">
+          {/* Header de la página */}
+          <div className="services-page-header">
+            <h1 className="services-page-title">
+              Nuestros <span className="title-accent">Servicios</span>
+            </h1>
+            <p className="services-page-subtitle">
+              Descubre nuestra gama completa de tratamientos profesionales de belleza
+            </p>
+          </div>
 
-      {/* GRID DE SERVICIOS */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {services.map((service) => (
-          <div
-            key={service.id}
-            onClick={() => navigate(`/services/${service.id}`)}
-            className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 flex flex-col"
-          >
-            {/* IMAGEN CARD */}
-            <div className="relative h-56 overflow-hidden">
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
-              <img
-                src={service.image}
-                alt={service.name}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute bottom-4 left-4 z-20">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-rose-600 text-xs font-bold rounded-full uppercase tracking-wide">
-                  {service.subservices?.length || 0} Variedades
-                </span>
+          {/* Controles de filtrado */}
+          <div className="services-controls">
+            {/* Buscador y Filtro en línea */}
+            <div className="search-filter-container">
+              {/* Buscador */}
+              <div className="search-container">
+                <Search size={20} />
+                <input
+                  type="text"
+                  placeholder="Buscar servicios..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
               </div>
-            </div>
 
-            {/* CONTENIDO CARD */}
-            <div className="p-6 flex-1 flex flex-col">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-rose-500 transition-colors mb-2">
-                {service.name}
-              </h3>
-              <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
-                {service.description}
-              </p>
-              
-              {/* LISTA PREVIA (Muestra los primeros 3) */}
-              <ul className="space-y-1 mb-6">
-                {service.subservices?.slice(0, 3).map((sub, idx) => (
-                  <li key={idx} className="text-xs text-gray-400 flex items-center">
-                    <Sparkles size={10} className="mr-2 text-rose-300" />
-                    {sub.name.split('(')[0]} {/* Corta nombres muy largos */}
-                  </li>
-                ))}
-                {service.subservices?.length > 3 && (
-                  <li className="text-xs text-rose-400 font-medium italic">
-                    + {service.subservices.length - 3} más...
-                  </li>
+              {/* Filtro desplegable */}
+              <div className="filter-dropdown">
+                <button
+                  className="filter-button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <span>{selectedCategory}</span>
+                  <ChevronDown 
+                    size={18} 
+                    className={`chevron ${isDropdownOpen ? 'open' : ''}`}
+                  />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-menu">
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        className={`dropdown-item ${selectedCategory === category ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
                 )}
-              </ul>
-
-              <div className="flex items-center text-rose-500 font-medium text-sm group-hover:translate-x-2 transition-transform mt-auto">
-                Ver detalles <ArrowRight size={16} className="ml-2" />
               </div>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+
+          {/* Resultados */}
+          <div className="services-results">
+            <div className="results-header">
+              <h2>
+                {selectedCategory === "Todos" ? "Todos los Servicios" : selectedCategory}
+              </h2>
+              <p>{filteredServices.length} servicios disponibles</p>
+            </div>
+
+            {/* Grid de servicios */}
+            {filteredServices.length === 0 ? (
+              <div className="no-results">
+                <Sparkles size={48} />
+                <h3>No se encontraron servicios</h3>
+                <p>Intenta con otros términos de búsqueda o categoría</p>
+                <button 
+                  className="btn-secondary"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("Todos");
+                  }}
+                >
+                  Ver todos los servicios
+                </button>
+              </div>
+            ) : (
+              <div className="services-grid">
+                {filteredServices.map((service) => (
+                  <ServiceCard key={service.id} service={service} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
 

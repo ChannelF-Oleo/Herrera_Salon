@@ -150,8 +150,20 @@ const ShoppingCart = () => {
 
               {/* SECCIÓN DE ENTREGA (Solo visible si no estamos en el paso final de pago) */}
               {!showCheckout && (
-                <div className="p-4 border-t border-gray-100 bg-gray-50">
-                  <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">
+                <div 
+                  className="p-4 border-t"
+                  style={{ 
+                    borderColor: 'var(--glass-border)',
+                    backgroundColor: 'var(--champagne-light)'
+                  }}
+                >
+                  <h3 
+                    className="text-sm font-bold mb-3 uppercase tracking-wider"
+                    style={{ 
+                      color: 'var(--soft-bronze)',
+                      fontFamily: 'var(--font-body)'
+                    }}
+                  >
                     Método de Entrega
                   </h3>
 
@@ -161,9 +173,18 @@ const ShoppingCart = () => {
                       onClick={() => setDeliveryMethod("pickup")}
                       className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
                         deliveryMethod === "pickup"
-                          ? "border-purple-600 bg-purple-50 text-purple-700"
-                          : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
+                          ? "text-primary"
+                          : "text-muted hover:border-secondary"
                       }`}
+                      style={{
+                        borderColor: deliveryMethod === "pickup" 
+                          ? 'var(--soft-bronze)' 
+                          : 'var(--glass-border)',
+                        backgroundColor: deliveryMethod === "pickup" 
+                          ? 'var(--champagne)' 
+                          : 'var(--optic-white)',
+                        borderRadius: 'var(--card-border-radius)'
+                      }}
                     >
                       <Store size={24} className="mb-2" />
                       <span className="text-sm font-medium">
@@ -176,9 +197,18 @@ const ShoppingCart = () => {
                       onClick={() => setDeliveryMethod("shipping")}
                       className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
                         deliveryMethod === "shipping"
-                          ? "border-purple-600 bg-purple-50 text-purple-700"
-                          : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
+                          ? "text-primary"
+                          : "text-muted hover:border-secondary"
                       }`}
+                      style={{
+                        borderColor: deliveryMethod === "shipping" 
+                          ? 'var(--soft-bronze)' 
+                          : 'var(--glass-border)',
+                        backgroundColor: deliveryMethod === "shipping" 
+                          ? 'var(--champagne)' 
+                          : 'var(--optic-white)',
+                        borderRadius: 'var(--card-border-radius)'
+                      }}
                     >
                       <Truck size={24} className="mb-2" />
                       <span className="text-sm font-medium">
@@ -193,14 +223,27 @@ const ShoppingCart = () => {
                   {/* Input de Dirección (Solo si es Envío) */}
                   {deliveryMethod === "shipping" && (
                     <div className="animate-fade-in">
-                      <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1">
+                      <label 
+                        className="block text-xs font-bold mb-1 flex items-center gap-1"
+                        style={{ 
+                          color: 'var(--soft-bronze)',
+                          fontFamily: 'var(--font-body)'
+                        }}
+                      >
                         <MapPin size={12} /> Dirección de Envío
                       </label>
                       <textarea
                         value={shippingAddress}
                         onChange={(e) => setShippingAddress(e.target.value)}
                         placeholder="Calle, Número, Sector, Ciudad..."
-                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                        className="w-full p-2 text-sm border rounded-lg focus:ring-2 focus:border-transparent resize-none"
+                        style={{
+                          borderColor: 'var(--glass-border)',
+                          borderRadius: 'var(--card-border-radius)',
+                          fontFamily: 'var(--font-body)',
+                          backgroundColor: 'var(--optic-white)',
+                          color: 'var(--carbon-black)'
+                        }}
                         rows="2"
                       />
                     </div>

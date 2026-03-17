@@ -1,0 +1,55 @@
+/* =========================================
+   DASHBOARD MAIN STYLES ENTRY POINT
+   Herrera Beauty Studio - Optimized CSS System
+   ========================================= */
+
+/* Import the optimized dashboard system */
+@import './dashboard-optimized.css';
+
+/* Import overrides for Tailwind conflicts */
+@import './dashboard-overrides.css';
+
+/* Import Google Fonts for better performance */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+/* Ensure fonts are loaded and applied */
+body {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Global reset for dashboard */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+#root {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection styles */
+::selection {
+  background: var(--accent-primary);
+  color: var(--brand-white);
+}
+
+::-moz-selection {
+  background: var(--accent-primary);
+  color: var(--brand-white);
+}

@@ -23,7 +23,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { hasPermission } from "../utils/rolePermissions";
-import "./BookingsView.css"; // Reutilizamos estilos de BookingsView por consistencia
+import "./OrdersView.css"; // CSS específico para OrdersView
 
 const OrdersView = ({ userRole }) => {
   const [orders, setOrders] = useState([]);

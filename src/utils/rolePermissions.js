@@ -19,11 +19,6 @@ const MENU_CONFIG = [
     allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF],
   },
   {
-    id: "bookings",
-    label: "Gestión de Citas",
-    allowedRoles: [ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF],
-  },
-  {
     id: "services",
     label: "Servicios",
     allowedRoles: [ROLES.ADMIN, ROLES.MANAGER],
@@ -54,9 +49,6 @@ const MENU_CONFIG = [
  * 2. Configuración de Permisos Específicos (Acciones dentro de las vistas)
  */
 const ACTION_PERMISSIONS = {
-  // --- Permisos de Citas ---
-  canManageBookings: [ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF],
-
   // --- Permisos de Servicios (NUEVO) ---
   canEditServices: [ROLES.ADMIN, ROLES.MANAGER], // Crear y editar
   canDeleteServices: [ROLES.ADMIN], // Solo admin borra

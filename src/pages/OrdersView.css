@@ -1,0 +1,185 @@
+/* =========================================
+   ORDERS VIEW - Gestión de Pedidos
+   Usando variables globales de Herrera Beauty Studio
+   ========================================= */
+
+.bookings-view {
+  padding: var(--section-padding);
+  font-family: var(--font-body);
+  background-color: var(--champagne-light);
+  min-height: 100vh;
+}
+
+/* HEADER */
+.bookings-view__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.bookings-view__header h1 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  color: var(--carbon-black);
+  margin: 0;
+}
+
+/* FILTERS */
+.bookings-view__filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--optic-white);
+  padding: 0.75rem;
+  border-radius: var(--card-border-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-input,
+.status-filter {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  color: var(--carbon-black);
+  min-width: 200px;
+}
+
+.search-input::placeholder {
+  color: var(--soft-bronze);
+  opacity: 0.7;
+}
+
+/* EMPTY STATE */
+.bookings-view__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.bookings-view__empty h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  color: var(--soft-bronze);
+  margin: 0;
+}
+
+/* BOOKINGS LIST */
+.bookings-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+
+/* BOOKING CARD */
+.booking-card {
+  background: var(--optic-white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--glass-border);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.booking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.booking-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--champagne);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.booking-card__content {
+  padding: 1rem;
+}
+
+.booking-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: var(--champagne-light);
+  border-top: 1px solid var(--glass-border);
+}
+
+/* BUTTONS */
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: var(--btn-border-radius);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+}
+
+.btn-view {
+  background: var(--glass-bg);
+  color: var(--soft-bronze);
+  border: 1px solid var(--glass-border);
+}
+
+.btn-view:hover {
+  background: var(--champagne);
+  color: var(--carbon-black);
+}
+
+/* SPINNER */
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--champagne);
+  border-top: 3px solid var(--soft-bronze);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .bookings-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .bookings-view__filters {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .search-input {
+    min-width: auto;
+    width: 100%;
+  }
+}

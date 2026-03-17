@@ -11,6 +11,7 @@ import Navbar from "./components/layout/Navbar";
 import Footer from "./components/layout/Footer";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import ProtectedRoute from "./components/common/ProtectedRoute";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 // Páginas Públicas
 import Home from "./pages/Home";
@@ -36,7 +37,6 @@ import CourseDetail from "./pages/Academy/CourseDetail";
 
 import About from "./pages/About";
 import Gallery from "./pages/Gallery";
-import Booking from "./pages/Booking";
 
 // Componentes del carrito
 import ShoppingCart from "./components/cart/ShoppingCart";
@@ -44,9 +44,9 @@ import ShoppingCart from "./components/cart/ShoppingCart";
 // Layout para la parte pública (Con Navbar y Footer)
 const PublicLayout = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-white" style={{ maxWidth: '100vw', overflowX: 'hidden' }}>
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow" style={{ maxWidth: '100%', overflowX: 'hidden' }}>
         {/* Aquí se renderizará el contenido de la ruta hija */}
         <Outlet />
       </main>
@@ -61,6 +61,9 @@ const App = () => {
       <AuthProvider>
         <CartProvider>
           <BrowserRouter>
+            {/* Scroll to top on route change */}
+            <ScrollToTop />
+            
             {/* Shopping Cart - Available globally */}
             <ShoppingCart />
             <Routes>
@@ -115,18 +118,6 @@ const App = () => {
               />
 
               <Route
-                path="/admin/bookings"
-                element={
-                  <ProtectedRoute
-                    allowedRoles={["admin", "manager", "staff"]}
-                    requiredPermission="canManageBookings"
-                  >
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
-
-              <Route
                 path="/admin/academy"
                 element={
                   <ProtectedRoute
@@ -174,7 +165,6 @@ const App = () => {
                 {/* Otras Páginas */}
                 <Route path="/about" element={<About />} />
                 <Route path="/gallery" element={<Gallery />} />
-                <Route path="/booking" element={<Booking />} />
               </Route>
             </Routes>
           </BrowserRouter>

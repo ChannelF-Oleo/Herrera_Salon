@@ -11,6 +11,10 @@ import {
   BookOpen,
   AlertCircle,
 } from "lucide-react";
+import "../../styles/AcademySection.css";
+
+// Imagen academy
+import academyImage from "../../assets/images/academy_image.jpeg";
 
 const AcademySection = () => {
   const navigate = useNavigate();
@@ -52,7 +56,7 @@ const AcademySection = () => {
               level: data.level || "Principiante",
               image:
                 data.image ||
-                "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+                academyImage,
               featured: data.featured !== undefined ? data.featured : true,
             };
           });
@@ -76,7 +80,7 @@ const AcademySection = () => {
   }, []);
 
   const CourseCard = ({ course }) => (
-    <div className="course-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group flex flex-col h-full">
+    <div className="course-card">
       <div className="relative overflow-hidden h-48">
         <img
           src={course.image}
@@ -217,28 +221,87 @@ const AcademySection = () => {
     );
   }
 
-  // Sin cursos disponibles
+  // Sin cursos disponibles - Mostrar diseño hero sin cursos
   if (courses.length === 0) {
     return (
-      <section className="py-20 bg-gradient-to-br from-purple-50 via-white to-pink-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-              <GraduationCap className="w-8 h-8 text-purple-600" />
+      <section className="academy-section">
+        <div className="academy-container">
+          {/* Imagen destacada a la izquierda */}
+          <div className="academy-image-wrapper">
+            <img 
+              src={academyImage} 
+              alt="Herrera Beauty Academy" 
+              className="academy-image"
+            />
+            {/* Badge sobre la imagen */}
+            <div className="academy-badge">
+              <span className="badge-text">Academy</span>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              D'Galú Academy
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-6">
-              Próximamente tendremos cursos disponibles
-            </p>
-            <button
-              onClick={() => navigate("/academy")}
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Ver Academia
-            </button>
           </div>
+
+          {/* Contenido a la derecha */}
+          <div className="academy-content animate-fade-in">
+            <div className="academy-header-badge">
+              <span className="badge-text">Educación Profesional</span>
+            </div>
+            
+            <h2 className="academy-title">
+              Herrera Beauty
+              <span className="title-accent">Academy</span>
+            </h2>
+            
+            <p className="academy-subtitle">
+              Donde el talento se encuentra con la técnica profesional
+            </p>
+            
+            <p className="academy-description">
+              Próximamente tendremos cursos especializados disponibles. 
+              Desarrolla tus habilidades con expertos en belleza y obtén certificación profesional.
+            </p>
+
+            <div className="academy-indicators">
+              <span className="indicator">
+                <div className="indicator-dot certification"></div>
+                Certificación incluida
+              </span>
+              <span className="indicator">
+                <div className="indicator-dot practice"></div>
+                Práctica real
+              </span>
+              <span className="indicator">
+                <div className="indicator-dot expert"></div>
+                Instructores expertos
+              </span>
+            </div>
+
+            <div className="academy-cta-group">
+              <button 
+                className="btn-primary" 
+                onClick={() => navigate("/academy")}
+                type="button"
+                aria-label="Ver academia"
+              >
+                <GraduationCap size={18} />
+                <span>Ver Academia</span>
+              </button>
+              
+              <button 
+                className="btn-secondary" 
+                onClick={() => navigate("/contact")}
+                type="button"
+                aria-label="Contactar para más información"
+              >
+                <span>Más Info</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Elementos visuales decorativos */}
+        <div className="academy-visual">
+          <div className="visual-element visual-circle-1"></div>
+          <div className="visual-element visual-circle-2"></div>
         </div>
       </section>
     );
@@ -246,62 +309,96 @@ const AcademySection = () => {
 
   // Renderizado normal con cursos
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        {/* Header de la sección */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <GraduationCap className="w-8 h-8 text-purple-600" />
-            <BookOpen className="w-8 h-8 text-purple-600" />
+    <section className="academy-section">
+      <div className="academy-container">
+        {/* Imagen destacada a la izquierda */}
+        <div className="academy-image-wrapper">
+          <img 
+            src={courses[0]?.image || academyImage} 
+            alt="Herrera Beauty Academy" 
+            className="academy-image"
+          />
+          {/* Badge sobre la imagen */}
+          <div className="academy-badge">
+            <span className="badge-text">Academy</span>
           </div>
+        </div>
 
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            D'Galú Academy
+        {/* Contenido a la derecha */}
+        <div className="academy-content animate-fade-in">
+          <div className="academy-header-badge">
+            <span className="badge-text">Educación Profesional</span>
+          </div>
+          
+          <h2 className="academy-title">
+            Herrera Beauty
+            <span className="title-accent">Academy</span>
           </h2>
-
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-            Desarrolla tus habilidades profesionales con nuestros cursos
-            especializados. Aprende de los mejores expertos en belleza y
-            bienestar.
+          
+          <p className="academy-subtitle">
+            Donde el talento se encuentra con la técnica profesional
+          </p>
+          
+          <p className="academy-description">
+            Desarrolla tus habilidades con nuestros cursos especializados. 
+            Aprende de expertos en belleza y obtén certificación profesional.
           </p>
 
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+          <div className="academy-indicators">
+            <span className="indicator">
+              <div className="indicator-dot certification"></div>
               Certificación incluida
             </span>
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span className="indicator">
+              <div className="indicator-dot practice"></div>
               Práctica real
             </span>
-            <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+            <span className="indicator">
+              <div className="indicator-dot expert"></div>
               Instructores expertos
             </span>
           </div>
-        </div>
 
-        {/* Grid de cursos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {courses.map((course) => (
-            <CourseCard key={course.id} course={course} />
-          ))}
+          <div className="academy-cta-group">
+            <button 
+              className="btn-primary" 
+              onClick={() => navigate("/academy")}
+              type="button"
+              aria-label="Ver todos los cursos"
+            >
+              <GraduationCap size={18} />
+              <span>Ver Cursos</span>
+            </button>
+            
+            <button 
+              className="btn-secondary" 
+              onClick={() => navigate("/academy/inscripcion")}
+              type="button"
+              aria-label="Inscribirse ahora"
+            >
+              <span>Inscribirse</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Call to action */}
-        <div className="text-center">
-          <button
-            onClick={() => navigate("/academy")}
-            className="inline-flex items-center gap-2 bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition-all hover:shadow-lg font-semibold"
-          >
-            Ver Todos los Cursos
-            <ArrowRight size={20} />
-          </button>
-
-          <p className="text-sm text-gray-500 mt-3">
-            Más de {courses.length} cursos especializados disponibles
-          </p>
+      {/* Grid de cursos destacados */}
+      <div className="academy-courses-preview">
+        <div className="container">
+          <h3 className="preview-title">Cursos Destacados</h3>
+          <div className="courses-grid">
+            {courses.map((course) => (
+              <CourseCard key={course.id} course={course} />
+            ))}
+          </div>
         </div>
+      </div>
+
+      {/* Elementos visuales decorativos */}
+      <div className="academy-visual">
+        <div className="visual-element visual-circle-1"></div>
+        <div className="visual-element visual-circle-2"></div>
       </div>
     </section>
   );

@@ -1,28 +1,33 @@
 import { useState, useEffect } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import ProductCard from "../../components/products/ProductCard";
-import { Search, Filter, ShoppingBag } from "lucide-react";
+import { Search, ChevronDown, ShoppingBag, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import "../../styles/ProductsList.css";
 
+// Imagen hero para productos
+import productsHeroImage from "../../assets/images/hero_image.jpeg";
+
 const ProductsList = () => {
+  const navigate = useNavigate();
   const { addItem } = useCart();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("name");
-  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Categorías disponibles
   const categories = [
-    { id: "all", name: "Todos los productos", count: 0 },
-    { id: "esmaltes", name: "Esmaltes", count: 0 },
-    { id: "kits", name: "Kits", count: 0 },
-    { id: "cuidado", name: "Cuidado", count: 0 },
-    { id: "herramientas", name: "Herramientas", count: 0 }
+    "Todos",
+    "Esmaltes",
+    "Kits",
+    "Cuidado",
+    "Herramientas",
+    "Accesorios"
   ];
 
   useEffect(() => {
@@ -32,7 +37,8 @@ const ProductsList = () => {
         const productsRef = collection(db, "products");
         const q = query(
           productsRef,
-          where("isActive", "==", true)
+          where("isActive", "==", true),
+          orderBy("name", "asc")
         );
 
         const snapshot = await getDocs(q);
@@ -45,8 +51,22 @@ const ProductsList = () => {
         setFilteredProducts(productsData);
       } catch (error) {
         console.error("Error fetching products:", error);
-        setProducts([]);
-        setFilteredProducts([]);
+        // Fallback sin orderBy
+        try {
+          const fallbackSnapshot = await getDocs(
+            query(collection(db, "products"), where("isActive", "==", true))
+          );
+          const fallbackData = fallbackSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setProducts(fallbackData);
+          setFilteredProducts(fallbackData);
+        } catch (fallbackError) {
+          console.error("Fallback también falló:", fallbackError);
+          setProducts([]);
+          setFilteredProducts([]);
+        }
       } finally {
         setLoading(false);
       }
@@ -55,93 +75,153 @@ const ProductsList = () => {
     fetchProducts();
   }, []);
 
-  // Filtrar y ordenar productos
+  // Filtrar productos
   useEffect(() => {
-    let filtered = [...products];
+    let filtered = products;
+
+    // Filtrar por categoría
+    if (selectedCategory !== "Todos") {
+      filtered = filtered.filter(product => 
+        product.category?.toLowerCase() === selectedCategory.toLowerCase()
+      );
+    }
 
     // Filtrar por búsqueda
     if (searchTerm) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Filtrar por categoría
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    // Ordenar
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "name":
-          return a.name.localeCompare(b.name);
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "rating":
-          return (b.rating || 0) - (a.rating || 0);
-        case "stock":
-          return b.stock - a.stock;
-        default:
-          return 0;
-      }
-    });
-
     setFilteredProducts(filtered);
-  }, [products, searchTerm, selectedCategory, sortBy]);
+  }, [products, searchTerm, selectedCategory]);
 
-  // El ProductCard ya maneja el addItem internamente
-  // Este callback es solo para logging o acciones adicionales
-  const handleAddToCart = (product, event) => {
-    console.log('Producto agregado al carrito:', product.name);
-  };
+  // Cerrar dropdown al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && !event.target.closest('.filter-dropdown')) {
+        setIsDropdownOpen(false);
+      }
+    };
 
-  // Contar productos por categoría
-  const getCategoryCount = (categoryId) => {
-    if (categoryId === "all") return products.length;
-    return products.filter(p => p.category === categoryId).length;
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  const ProductCardCompact = ({ product }) => (
+    <div
+      className="product-card group"
+      onClick={() => navigate(`/products/${product.id}`)}
+    >
+      {/* Imagen del producto */}
+      <div className="product-card-image-wrapper">
+        <img
+          src={product.images?.[0] || productsHeroImage}
+          alt={product.name}
+          className="product-card-image"
+        />
+        
+        {/* Badges */}
+        <div className="product-card-badges">
+          {product.featured && (
+            <span className="product-badge featured">
+              <Star size={10} />
+              Destacado
+            </span>
+          )}
+          {product.stock === 0 && (
+            <span className="product-badge out-of-stock">
+              Agotado
+            </span>
+          )}
+          {product.stock > 0 && product.stock <= 5 && (
+            <span className="product-badge low-stock">
+              Pocas unidades
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Contenido de la card */}
+      <div className="product-card-content">
+        <div className="product-card-header">
+          <span className="product-card-category">{product.category}</span>
+          {product.rating > 0 && (
+            <div className="product-card-rating">
+              <Star size={12} />
+              <span>{product.rating.toFixed(1)}</span>
+            </div>
+          )}
+        </div>
+
+        <h3 className="product-card-title">{product.name}</h3>
+        
+        <p className="product-card-description">
+          {product.description || "Producto profesional de belleza"}
+        </p>
+
+        {/* Precio y CTA */}
+        <div className="product-card-footer">
+          <div className="product-card-price">
+            <span className="price">${product.price?.toFixed(2) || "0.00"}</span>
+          </div>
+
+          <button
+            className={`product-card-add-btn ${product.stock === 0 ? 'disabled' : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (product.stock > 0) {
+                addItem(product, 1, e);
+              }
+            }}
+            disabled={product.stock === 0}
+          >
+            <ShoppingBag size={14} />
+            <span>{product.stock === 0 ? 'Agotado' : 'Agregar'}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   if (loading) {
     return (
-      <div className="products-page pt-20">
-        <div className="container mx-auto px-4 py-8">
-          <div className="loading-spinner">
-            <div className="spinner-glass"></div>
-          </div>
+      <div className="products-loading">
+        <div className="loading-content">
+          <ShoppingBag className="loading-icon" size={48} />
+          <h2>Cargando productos...</h2>
+          <p>Preparando nuestros productos de belleza</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="products-page pt-20">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header con efecto cristal */}
-        <div className="products-header">
-          <div className="flex items-center gap-3 mb-4">
-            <ShoppingBag className="w-8 h-8 text-white" />
-            <h1>Productos D'Galú</h1>
+    <main className="products-page">
+      {/* Sección de filtros y productos */}
+      <section className="products-content">
+        <div className="container">
+          {/* Header de la página */}
+          <div className="products-page-header">
+            <h1 className="products-page-title">
+              Nuestros <span className="title-accent">Productos</span>
+            </h1>
+            <p className="products-page-subtitle">
+              Descubre nuestra línea exclusiva de productos profesionales para el cuidado y belleza
+            </p>
           </div>
-          <p>
-            Descubre nuestra línea exclusiva de productos profesionales para el cuidado 
-            y belleza de tus uñas. Calidad premium para resultados excepcionales.
-          </p>
-        </div>
 
-
-
-        {/* Filtros con efecto cristal */}
-        <div className="products-filters">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Búsqueda */}
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-5 h-5" />
+          {/* Controles de filtrado */}
+          <div className="products-controls">
+            {/* Buscador y Filtro en línea */}
+            <div className="search-filter-container">
+              {/* Buscador */}
+              <div className="search-container">
+                <Search size={20} />
                 <input
                   type="text"
                   placeholder="Buscar productos..."
@@ -150,87 +230,76 @@ const ProductsList = () => {
                   className="search-input"
                 />
               </div>
+
+              {/* Filtro desplegable */}
+              <div className="filter-dropdown">
+                <button
+                  className="filter-button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                >
+                  <span>{selectedCategory}</span>
+                  <ChevronDown 
+                    size={18} 
+                    className={`chevron ${isDropdownOpen ? 'open' : ''}`}
+                  />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="dropdown-menu">
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        className={`dropdown-item ${selectedCategory === category ? 'active' : ''}`}
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        {category}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Resultados */}
+          <div className="products-results">
+            <div className="results-header">
+              <h2>
+                {selectedCategory === "Todos" ? "Todos los Productos" : selectedCategory}
+              </h2>
+              <p>{filteredProducts.length} productos disponibles</p>
             </div>
 
-            {/* Ordenar */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-white" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="search-input"
-                style={{ paddingLeft: '1rem' }}
-              >
-                <option value="name">Nombre A-Z</option>
-                <option value="price-low">Precio: Menor a Mayor</option>
-                <option value="price-high">Precio: Mayor a Menor</option>
-                <option value="rating">Mejor Valorados</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Categorías */}
-          <div className="category-buttons">
-            {categories.map(category => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
-              >
-                {category.name} ({getCategoryCount(category.id)})
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Resultados */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            Mostrando {filteredProducts.length} de {products.length} productos
-            {searchTerm && ` para "${searchTerm}"`}
-            {selectedCategory !== "all" && ` en ${categories.find(c => c.id === selectedCategory)?.name}`}
-          </p>
-        </div>
-
-        {/* Grid de productos */}
-        {filteredProducts.length > 0 ? (
-          <div className="products-grid">
-            {filteredProducts.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                showAddToCart={true}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No se encontraron productos
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {searchTerm || selectedCategory !== "all" 
-                ? "Intenta ajustar tus filtros de búsqueda"
-                : "Próximamente tendremos productos disponibles"
-              }
-            </p>
-            {(searchTerm || selectedCategory !== "all") && (
-              <button
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("all");
-                }}
-                className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                Limpiar Filtros
-              </button>
+            {/* Grid de productos */}
+            {filteredProducts.length === 0 ? (
+              <div className="no-results">
+                <ShoppingBag size={48} />
+                <h3>No se encontraron productos</h3>
+                <p>Intenta con otros términos de búsqueda o categoría</p>
+                <button 
+                  className="btn-secondary"
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory("Todos");
+                  }}
+                >
+                  Ver todos los productos
+                </button>
+              </div>
+            ) : (
+              <div className="products-grid">
+                {filteredProducts.map((product) => (
+                  <ProductCardCompact key={product.id} product={product} />
+                ))}
+              </div>
             )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 };
 

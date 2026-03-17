@@ -1,7 +1,7 @@
 // src/components/products/ProductCard.jsx
 import { } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Star, Package, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Star, AlertTriangle } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 
 const ProductCard = ({ product, onAddToCart, showAddToCart = true }) => {
@@ -13,11 +13,8 @@ const ProductCard = ({ product, onAddToCart, showAddToCart = true }) => {
   };
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); // Evitar que se active el click del card
+    e.stopPropagation();
     e.preventDefault();
-    
-    // Agregar al carrito usando el contexto con el evento
-    // NO llamamos onAddToCart porque eso causaría doble-add
     addItem(product, 1, e);
   };
 
@@ -26,97 +23,68 @@ const ProductCard = ({ product, onAddToCart, showAddToCart = true }) => {
 
   return (
     <div 
-      className={`bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group ${
-        isOutOfStock ? 'opacity-50 grayscale' : ''
-      }`}
+      className={`product-card ${isOutOfStock ? 'product-card--out-of-stock' : ''}`}
       onClick={handleCardClick}
     >
-      {/* Imagen del producto */}
-      <div className="relative overflow-hidden">
+      {/* Imagen del producto - Más pequeña */}
+      <div className="product-card__image-wrapper">
         <img
-          src={product.images?.[0] || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80'}
+          src={product.images?.[0] || 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80'}
           alt={product.name}
-          className={`w-full h-36 object-cover group-hover:scale-105 transition-transform duration-300 ${
-            isOutOfStock ? 'grayscale' : ''
-          }`}
+          className="product-card__image"
         />
         
-        {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+        {/* Badges - Más pequeños */}
+        <div className="product-card__badges">
           {product.featured && (
-            <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full font-medium">
+            <span className="product-badge product-badge--featured">
               Destacado
             </span>
           )}
           {isLowStock && !isOutOfStock && (
-            <span className="bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-medium flex items-center gap-1">
-              <AlertTriangle size={10} />
-              Pocas unidades
+            <span className="product-badge product-badge--warning">
+              <AlertTriangle size={8} />
+              Pocas
             </span>
           )}
           {isOutOfStock && (
-            <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+            <span className="product-badge product-badge--error">
               Agotado
             </span>
           )}
         </div>
-
-        {/* Stock indicator - Solo mostrar en vista admin, no en vista pública */}
       </div>
 
-      {/* Contenido del producto */}
-      <div className="p-3">
-        {/* Categoría */}
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-purple-600 uppercase tracking-wide">
+      {/* Contenido del producto - Más compacto */}
+      <div className="product-card__content">
+        {/* Header con categoría y rating */}
+        <div className="product-card__header">
+          <span className="product-card__category">
             {product.category}
           </span>
           {product.rating > 0 && (
-            <div className="flex items-center gap-1">
-              <Star size={12} className="text-yellow-400 fill-current" />
-              <span className="text-xs text-gray-600">
-                {product.rating.toFixed(1)} ({product.reviews})
-              </span>
+            <div className="product-card__rating">
+              <Star size={10} className="product-card__star" />
+              <span>{product.rating.toFixed(1)}</span>
             </div>
           )}
         </div>
 
         {/* Nombre del producto */}
-        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1 group-hover:text-purple-600 transition-colors text-sm">
+        <h3 className="product-card__title">
           {product.name}
         </h3>
 
-        {/* Descripción */}
-        <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+        {/* Descripción - Más corta */}
+        <p className="product-card__description">
           {product.description}
         </p>
 
-        {/* Especificaciones clave */}
-        {product.specifications && (
-          <div className="mb-2">
-            <div className="flex flex-wrap gap-1">
-              {product.specifications.brand && (
-                <span className="text-xs bg-gray-100 text-gray-600 px-1 py-0.5 rounded text-xs">
-                  {product.specifications.brand}
-                </span>
-              )}
-              {product.specifications.volume && (
-                <span className="text-xs bg-gray-100 text-gray-600 px-1 py-0.5 rounded text-xs">
-                  {product.specifications.volume}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
         {/* Precio y acciones */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-base font-bold text-gray-900">
+        <div className="product-card__footer">
+          <div className="product-card__price-section">
+            <span className="product-card__price">
               ${product.price.toFixed(2)}
-            </span>
-            <span className="text-xs text-gray-500">
-              SKU: {product.sku}
             </span>
           </div>
 
@@ -124,38 +92,15 @@ const ProductCard = ({ product, onAddToCart, showAddToCart = true }) => {
             <button
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              className={`flex items-center gap-1 px-2 py-1.5 rounded-lg font-medium text-xs transition-all ${
-                isOutOfStock
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-purple-600 text-white hover:bg-purple-700 hover:shadow-md'
+              className={`product-card__add-btn ${
+                isOutOfStock ? 'product-card__add-btn--disabled' : ''
               }`}
             >
-              <ShoppingCart size={12} />
+              <ShoppingCart size={10} />
               {isOutOfStock ? 'Agotado' : isInCart(product.id) ? `(${getItemQuantity(product.id)})` : 'Agregar'}
             </button>
           )}
         </div>
-
-        {/* Tags */}
-        {product.tags && product.tags.length > 0 && (
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <div className="flex flex-wrap gap-1">
-              {product.tags.slice(0, 2).map((tag, index) => (
-                <span
-                  key={index}
-                  className="text-xs bg-purple-50 text-purple-600 px-1 py-0.5 rounded text-xs"
-                >
-                  {tag}
-                </span>
-              ))}
-              {product.tags.length > 2 && (
-                <span className="text-xs text-gray-500">
-                  +{product.tags.length - 2}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

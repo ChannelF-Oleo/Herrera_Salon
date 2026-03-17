@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigateWithScroll } from "../hooks/useNavigateWithScroll";
 // Agregamos 'limit' para optimizar la descarga
 import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "../config/firebase";
@@ -10,16 +10,17 @@ import "../styles/Styles.css";
 import ProductsSection from "../components/home/ProductsSection";
 import AcademySection from "../components/home/AcademySection";
 import ReviewsSection from "./ReviewsSection";
+import { MessageCircle } from "lucide-react";
 
-// Imágenes
-import trenzaRisaBackground from "../assets/images/dgalu_backgroundHero.jpg";
+// Imagen hero
+import heroImage from "../assets/images/hero_image.jpeg";
 
 // --- Card de Servicio (Limpia) ---
 const ServiceCard = ({ service }) => {
-  const navigate = useNavigate();
+  const navigateWithScroll = useNavigateWithScroll();
 
   const handleClick = () => {
-    navigate(`/services/${service.id}`);
+    navigateWithScroll(`/services/${service.id}`);
   };
 
   return (
@@ -57,40 +58,69 @@ const ServiceCard = ({ service }) => {
 
 // --- Hero Section ---
 const HeroSection = () => {
-  const navigate = useNavigate();
+  const navigateWithScroll = useNavigateWithScroll();
 
   return (
     <section className="hero-section">
-      <div className="hero-background">
-        <img src={trenzaRisaBackground} alt="Fondo D'Galú" />
+      <div className="hero-container">
+        {/* Imagen a la izquierda */}
+        <div className="hero-image-wrapper">
+          <img 
+            src={heroImage} 
+            alt="Herrera Beauty Studio" 
+            className="hero-image"
+          />
+        </div>
+
+        {/* Contenido a la derecha */}
+        <div className="hero-content animate-fade-in">
+          <div className="hero-badge">
+            <span className="badge-text">Beauty Studio</span>
+          </div>
+          
+          <h1 className="hero-title">
+            Herrera Beauty
+            <span className="title-accent">Studio</span>
+          </h1>
+          
+          <p className="hero-subtitle">
+            Donde la belleza se encuentra con la técnica profesional
+          </p>
+          
+          <p className="hero-description">
+            Especialistas en peinados, uñas, maquillaje y tratamientos de belleza. 
+            Cada servicio es una experiencia personalizada.
+          </p>
+
+          <div className="hero-cta-group">
+            <a 
+              href="https://wa.me/18297050408?text=¡Buenas!%20Me%20gustaría%20agendar%20una%20cita"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+              aria-label="Agendar cita por WhatsApp"
+            >
+              <MessageCircle size={18} />
+              <span>Agendar Cita</span>
+            </a>
+            
+            <button 
+              className="btn-secondary" 
+              onClick={() => navigateWithScroll("/services")}
+              type="button"
+              aria-label="Ver todos los servicios"
+            >
+              <span>Ver Servicios</span>
+              <icons.ArrowRight size={16} />
+            </button>
+          </div>
+        </div>
       </div>
-      <div className="hero-overlay"></div>
 
-      <div className="hero-content animate-fade-in">
-        <h1 className="hero-title">D'Galú</h1>
-        <p className="hero-subtitle">SALÓN · UÑAS · SPA · MASAJES</p>
-        <p className="hero-quote">
-          Belleza, elegancia y cuidado personalizado en cada servicio.
-        </p>
-
-        <button className="btn-cta" onClick={() => navigate("/booking")}>
-          <icons.Calendar size={24} />
-          <span>¡Agendar Cita!</span>
-        </button>
-      </div>
-
-      <div className="custom-shape-divider-bottom-1671234567">
-        <svg
-          data-name="Layer 1"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1200 120"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
-            className="shape-fill"
-          ></path>
-        </svg>
+      {/* Elementos visuales decorativos más sutiles */}
+      <div className="hero-visual">
+        <div className="visual-element visual-circle-1"></div>
+        <div className="visual-element visual-circle-2"></div>
       </div>
     </section>
   );
@@ -98,7 +128,7 @@ const HeroSection = () => {
 
 // --- Services Section (Solo Firebase) ---
 const ServicesSection = () => {
-  const navigate = useNavigate();
+  const navigateWithScroll = useNavigateWithScroll();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -152,7 +182,7 @@ const ServicesSection = () => {
     <section id="servicios" className="services-section">
       <div className="container">
         <h2 className="section-title">
-          Nuestros <span className="highlight-text">Servicios Destacados</span>
+          Nuestros <span className="highlight-text">Servicios</span>
         </h2>
 
         <div className="services-grid">
@@ -163,14 +193,14 @@ const ServicesSection = () => {
 
         <div className="text-center mt-12">
           <button
-            onClick={() => navigate("/services")}
-            className="inline-flex items-center gap-2 bg-purple-600 text-white px-8 py-4 rounded-lg hover:bg-purple-700 transition-all hover:shadow-lg font-semibold"
+            onClick={() => navigateWithScroll("/services")}
+            className="btn-catalog"
           >
             Ver Catálogo Completo
-            <icons.ArrowRight size={20} />
+            <icons.ArrowRight size={18} />
           </button>
 
-          <p className="text-sm text-gray-500 mt-3">
+          <p className="catalog-subtitle">
             Descubre todos nuestros servicios especializados
           </p>
         </div>

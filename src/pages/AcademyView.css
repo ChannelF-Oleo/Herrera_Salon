@@ -3,21 +3,21 @@
    ========================================= */
 
 :root {
-  /* Academy specific colors */
-  --academy-card-bg: #ffffff;
-  --academy-card-border: rgba(0, 0, 0, 0.05);
-  --academy-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --academy-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.15);
-  --academy-tabs-bg: #ffffff;
-  --academy-tabs-border: rgba(0, 0, 0, 0.05);
+  /* Academy specific colors - usando paleta global */
+  --academy-card-bg: var(--optic-white);
+  --academy-card-border: rgba(166, 124, 82, 0.08);
+  --academy-card-shadow: var(--shadow-sm);
+  --academy-card-shadow-hover: var(--shadow-lg);
+  --academy-tabs-bg: var(--optic-white);
+  --academy-tabs-border: rgba(166, 124, 82, 0.08);
   
-  /* Dark theme overrides */
-  --dark-academy-card-bg: rgba(31, 41, 55, 0.8);
-  --dark-academy-card-border: rgba(75, 85, 99, 0.3);
-  --dark-academy-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --dark-academy-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.5);
-  --dark-academy-tabs-bg: rgba(31, 41, 55, 0.8);
-  --dark-academy-tabs-border: rgba(75, 85, 99, 0.3);
+  /* Dark theme overrides - usando paleta global */
+  --dark-academy-card-bg: var(--carbon-soft);
+  --dark-academy-card-border: rgba(166, 124, 82, 0.2);
+  --dark-academy-card-shadow: var(--shadow-md);
+  --dark-academy-card-shadow-hover: var(--shadow-xl);
+  --dark-academy-tabs-bg: var(--carbon-soft);
+  --dark-academy-tabs-border: rgba(166, 124, 82, 0.2);
 }
 
 .academy-view {

@@ -2,7 +2,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import fc from 'fast-check';
-import { ErrorHandler, BusinessError, BookingConflictError, InsufficientStockError, PaymentFailedError } from '../../utils/ErrorHandler.js';
+import { ErrorHandler, BusinessError, InsufficientStockError, PaymentFailedError } from '../../utils/ErrorHandler.js';
 
 /**
  * **Feature: dgalu-salon-system, Property 38: Network Error Recovery**

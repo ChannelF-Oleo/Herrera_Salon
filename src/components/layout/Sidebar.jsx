@@ -10,6 +10,7 @@ const Sidebar = ({
   isSidebarOpen, 
   setIsSidebarOpen,
   isSidebarCollapsed,
+  toggleSidebarCollapse,
   onLogout 
 }) => {
   const { toggleTheme, isDark } = useTheme();
@@ -18,6 +19,7 @@ const Sidebar = ({
   // Items principales para móvil (primeros 3 + expansión)
   const mobileMainItems = menuItems.slice(0, 3);
   const mobileHiddenItems = menuItems.slice(3);
+  
   return (
     <>
       {/* Overlay para móviles: cierra el menú al hacer click fuera */}
@@ -31,7 +33,7 @@ const Sidebar = ({
         <div className="sidebar-header">
           <div className="sidebar-logo-container">
             <h2 className="sidebar-logo">
-              {isSidebarCollapsed ? "D'" : "D'Galú"}
+              {isSidebarCollapsed ? "H'" : "Herrera"}
             </h2>
             {!isSidebarCollapsed && <span className="sidebar-subtitle">Admin</span>}
           </div>
@@ -58,12 +60,12 @@ const Sidebar = ({
                   className={`nav-item ${activeTab === item.id ? "active" : ""}`}
                   title={isSidebarCollapsed ? item.label : ""}
                 >
-                  <div className="nav-icon-wrapper">
+                  <div className="nav-item-icon">
                     {IconComponent && <IconComponent size={20} />}
                   </div>
                   
                   {!isSidebarCollapsed && (
-                    <span className="nav-label">{item.label}</span>
+                    <span className="nav-item-text">{item.label}</span>
                   )}
                 </button>
               );
@@ -84,10 +86,10 @@ const Sidebar = ({
                   }}
                   className={`nav-item ${activeTab === item.id ? "active" : ""}`}
                 >
-                  <div className="nav-icon-wrapper">
+                  <div className="nav-item-icon">
                     {IconComponent && <IconComponent size={20} />}
                   </div>
-                  <span className="nav-label">{item.label}</span>
+                  <span className="nav-item-text">{item.label}</span>
                 </button>
               );
             })}
@@ -98,10 +100,10 @@ const Sidebar = ({
                 onClick={() => setShowExpandedMenu(!showExpandedMenu)}
                 className="nav-item expand-btn"
               >
-                <div className="nav-icon-wrapper">
+                <div className="nav-item-icon">
                   <MoreHorizontal size={20} />
                 </div>
-                <span className="nav-label">Más</span>
+                <span className="nav-item-text">Más</span>
               </button>
             )}
           </div>
@@ -115,11 +117,11 @@ const Sidebar = ({
             className="nav-item theme-btn"
             title={isSidebarCollapsed ? (isDark ? "Tema Claro" : "Tema Oscuro") : ""}
           >
-            <div className="nav-icon-wrapper">
+            <div className="nav-item-icon">
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
             </div>
             {!isSidebarCollapsed && (
-              <span className="nav-label">
+              <span className="nav-item-text">
                 {isDark ? "Tema Claro" : "Tema Oscuro"}
               </span>
             )}
@@ -131,10 +133,10 @@ const Sidebar = ({
             className="nav-item logout-btn"
             title={isSidebarCollapsed ? "Cerrar Sesión" : ""}
           >
-            <div className="nav-icon-wrapper">
+            <div className="nav-item-icon">
               <LogOut size={20} />
             </div>
-            {!isSidebarCollapsed && <span className="nav-label">Salir</span>}
+            {!isSidebarCollapsed && <span className="nav-item-text">Salir</span>}
           </button>
         </div>
       </aside>
@@ -162,7 +164,7 @@ const Sidebar = ({
                     }}
                     className={`mobile-expanded-item ${activeTab === item.id ? "active" : ""}`}
                   >
-                    <div className="nav-icon-wrapper">
+                    <div className="nav-item-icon">
                       {IconComponent && <IconComponent size={20} />}
                     </div>
                     <span>{item.label}</span>
@@ -172,14 +174,14 @@ const Sidebar = ({
               
               {/* Opciones adicionales en el menú expandido */}
               <button onClick={toggleTheme} className="mobile-expanded-item">
-                <div className="nav-icon-wrapper">
+                <div className="nav-item-icon">
                   {isDark ? <Sun size={20} /> : <Moon size={20} />}
                 </div>
                 <span>{isDark ? "Tema Claro" : "Tema Oscuro"}</span>
               </button>
               
               <button onClick={onLogout} className="mobile-expanded-item logout">
-                <div className="nav-icon-wrapper">
+                <div className="nav-item-icon">
                   <LogOut size={20} />
                 </div>
                 <span>Cerrar Sesión</span>

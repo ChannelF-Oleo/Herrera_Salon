@@ -1,16 +1,17 @@
 // src/pages/Services/ServiceDetail.jsx
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useNavigateWithScroll } from "../../hooks/useNavigateWithScroll";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import { 
-  ArrowLeft, Clock, Calendar, Sparkles, Star, DollarSign
+  ArrowLeft, Clock, MessageCircle, Sparkles, Star, DollarSign
 } from "lucide-react";
 
 
 const ServiceDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const navigateWithScroll = useNavigateWithScroll();
   
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -56,20 +57,20 @@ const ServiceDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--champagne-light)' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{ borderColor: 'var(--soft-bronze)' }}></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-        <div className="text-red-500 text-xl font-bold mb-2">Error</div>
-        <p className="text-gray-600 mb-6">{error}</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{ backgroundColor: 'var(--champagne-light)' }}>
+        <div className="text-xl font-bold mb-2" style={{ color: 'var(--soft-bronze)' }}>Error</div>
+        <p className="text-muted mb-6">{error}</p>
         <button 
-          onClick={() => navigate("/services")} 
-          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          onClick={() => navigateWithScroll("/services")} 
+          className="btn-primary"
         >
           Volver a Servicios
         </button>
@@ -77,32 +78,21 @@ const ServiceDetail = () => {
     );
   }
 
-  // Función para manejar reserva
+  // Función para manejar reserva por WhatsApp
   const handleBookService = (subservice = null) => {
-    const bookingService = {
-      id: service.id,
-      name: subservice ? `${service.name} - ${subservice.name}` : service.name,
-      serviceName: service.name,
-      subserviceName: subservice ? subservice.name : null,
-      price: subservice ? subservice.price : service.basePrice || service.price,
-      duration: subservice ? (subservice.duration || 20) : (service.duration || 60),
-      description: subservice ? subservice.description : service.description,
-      image: service.image,
-      category: service.category
-    };
-    
-    navigate(`/booking?serviceId=${service.id}`, { 
-      state: { selectedService: bookingService }
-    });
+    const serviceName = subservice ? `${service.name} - ${subservice.name}` : service.name;
+    const message = `¡Buenas! Me gustaría agendar una cita para ${serviceName}`;
+    const whatsappUrl = `https://wa.me/18297050408?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20 pb-8">
-      <div className="max-w-6xl mx-auto px-4">
+    <div className="min-h-screen pt-20 pb-8" style={{ backgroundColor: 'var(--champagne-light)' }}>
+      <div className="container">
         {/* Botón Volver */}
         <button 
-          onClick={() => navigate("/services")} 
-          className="flex items-center text-purple-600 hover:text-purple-700 mb-6 transition-colors"
+          onClick={() => navigateWithScroll("/services")} 
+          className="flex items-center mb-6 transition-colors text-secondary hover:text-primary"
         >
           <ArrowLeft size={20} className="mr-2" />
           Volver a servicios
@@ -111,9 +101,9 @@ const ServiceDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Columna Principal - Información del Servicio */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
+            <div className="card-base">
               {/* Header con Imagen */}
-              <div className="relative h-64 md:h-80 bg-gray-200">
+              <div className="relative h-64 md:h-80" style={{ backgroundColor: 'var(--champagne-dark)' }}>
                 {service.image ? (
                   <img 
                     src={service.image} 
@@ -121,53 +111,83 @@ const ServiceDetail = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-gray-400">
+                  <div className="flex items-center justify-center h-full text-muted">
                     <span className="text-lg">Sin imagen disponible</span>
                   </div>
                 )}
                 <div className="absolute top-4 right-4">
-                  <span className="px-4 py-1.5 bg-white/90 backdrop-blur text-purple-600 font-bold rounded-full shadow-sm text-sm uppercase tracking-wide">
+                  <span 
+                    className="px-4 py-1.5 backdrop-blur font-bold rounded-full shadow-sm text-sm uppercase tracking-wide"
+                    style={{ 
+                      backgroundColor: 'var(--glass-bg)',
+                      color: 'var(--soft-bronze)',
+                      border: '1px solid var(--glass-border)'
+                    }}
+                  >
                     {service.category}
                   </span>
                 </div>
               </div>
 
               {/* Contenido */}
-              <div className="p-8">
+              <div style={{ padding: 'var(--section-padding)' }}>
                 <div className="mb-8">
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{service.name}</h1>
-                  <p className="text-gray-600 text-lg">
+                  <h1 className="text-display text-primary mb-2" style={{ fontSize: 'var(--font-size-4xl)' }}>
+                    {service.name}
+                  </h1>
+                  <p className="text-muted" style={{ fontSize: 'var(--font-size-lg)' }}>
                     {service.description || "Servicio de belleza profesional"}
                   </p>
                 </div>
 
                 {/* Información básica */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6 bg-gray-50 rounded-xl">
+                <div 
+                  className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 p-6 rounded-xl"
+                  style={{ backgroundColor: 'var(--champagne)' }}
+                >
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+                    <div 
+                      className="p-3 rounded-lg"
+                      style={{ 
+                        backgroundColor: 'var(--glass-bg)',
+                        color: 'var(--soft-bronze)'
+                      }}
+                    >
                       <Clock size={24} />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Duración base</p>
-                      <p className="font-semibold text-gray-800">{service.duration || 60} min</p>
+                      <p className="text-muted" style={{ fontSize: 'var(--font-size-sm)' }}>Duración base</p>
+                      <p className="font-semibold text-primary">{service.duration || 60} min</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+                    <div 
+                      className="p-3 rounded-lg"
+                      style={{ 
+                        backgroundColor: 'var(--glass-bg)',
+                        color: 'var(--soft-bronze)'
+                      }}
+                    >
                       <DollarSign size={24} />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Desde</p>
-                      <p className="font-semibold text-gray-800">${service.basePrice || service.price || 0}</p>
+                      <p className="text-muted" style={{ fontSize: 'var(--font-size-sm)' }}>Desde</p>
+                      <p className="font-semibold text-primary">${service.basePrice || service.price || 0}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                    <div 
+                      className="p-3 rounded-lg"
+                      style={{ 
+                        backgroundColor: 'var(--glass-bg)',
+                        color: 'var(--soft-bronze)'
+                      }}
+                    >
                       <Sparkles size={24} />
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Variantes</p>
-                      <p className="font-semibold text-gray-800">{service.subservices?.length || 1}</p>
+                      <p className="text-muted" style={{ fontSize: 'var(--font-size-sm)' }}>Variantes</p>
+                      <p className="font-semibold text-primary">{service.subservices?.length || 1}</p>
                     </div>
                   </div>
                 </div>
@@ -176,10 +196,10 @@ const ServiceDetail = () => {
                 {(!service.subservices || service.subservices.length === 0) && (
                   <button
                     onClick={() => handleBookService()}
-                    className="w-full bg-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                    className="btn-primary w-full py-4 px-6 flex items-center justify-center gap-2"
                   >
-                    <Calendar size={20} />
-                    Reservar este servicio
+                    <MessageCircle size={20} />
+                    Agendar por WhatsApp
                   </button>
                 )}
               </div>
@@ -188,9 +208,9 @@ const ServiceDetail = () => {
 
           {/* Columna Lateral - Subservicios */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Star className="text-purple-600" size={20} />
+            <div className="card-base p-6 sticky top-8">
+              <h2 className="text-display text-primary mb-6 flex items-center gap-2" style={{ fontSize: 'var(--font-size-xl)' }}>
+                <Star className="text-secondary" size={20} />
                 {service.subservices && service.subservices.length > 0 ? 'Elige tu variante' : 'Información'}
               </h2>
 
@@ -201,27 +221,35 @@ const ServiceDetail = () => {
                       key={index}
                       className={`border rounded-lg p-4 cursor-pointer transition-all ${
                         selectedSubservice?.name === subservice.name
-                          ? 'border-purple-500 bg-purple-50'
-                          : 'border-gray-200 hover:border-purple-300'
+                          ? 'border-secondary'
+                          : 'border-gray-200 hover:border-secondary'
                       }`}
+                      style={{
+                        backgroundColor: selectedSubservice?.name === subservice.name 
+                          ? 'var(--champagne)' 
+                          : 'transparent',
+                        borderColor: selectedSubservice?.name === subservice.name 
+                          ? 'var(--soft-bronze)' 
+                          : 'var(--glass-border)'
+                      }}
                       onClick={() => setSelectedSubservice(subservice)}
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-gray-900 text-sm">
+                        <h3 className="font-semibold text-primary" style={{ fontSize: 'var(--font-size-sm)' }}>
                           {subservice.name}
                         </h3>
-                        <span className="text-purple-600 font-bold text-sm">
+                        <span className="text-secondary font-bold" style={{ fontSize: 'var(--font-size-sm)' }}>
                           ${subservice.price}
                         </span>
                       </div>
                       
                       {subservice.description && (
-                        <p className="text-gray-600 text-xs mb-2">
+                        <p className="text-muted mb-2" style={{ fontSize: 'var(--font-size-xs)' }}>
                           {subservice.description}
                         </p>
                       )}
                       
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-4 text-muted" style={{ fontSize: 'var(--font-size-xs)' }}>
                         <span className="flex items-center gap-1">
                           <Clock size={12} />
                           {subservice.duration || 20} min
@@ -234,22 +262,22 @@ const ServiceDetail = () => {
                   {selectedSubservice && (
                     <button
                       onClick={() => handleBookService(selectedSubservice)}
-                      className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2 mt-6"
+                      className="btn-primary w-full py-3 px-4 flex items-center justify-center gap-2 mt-6"
                     >
-                      <Calendar size={18} />
-                      Reservar - ${selectedSubservice.price}
+                      <MessageCircle size={18} />
+                      Agendar - ${selectedSubservice.price}
                     </button>
                   )}
                 </div>
               ) : (
-                <div className="text-center text-gray-500">
+                <div className="text-center text-muted">
                   <p className="mb-4">Este servicio no tiene variantes específicas.</p>
                   <button
                     onClick={() => handleBookService()}
-                    className="w-full bg-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                    className="btn-primary w-full py-3 px-4 flex items-center justify-center gap-2"
                   >
-                    <Calendar size={18} />
-                    Reservar ahora
+                    <MessageCircle size={18} />
+                    Agendar por WhatsApp
                   </button>
                 </div>
               )}

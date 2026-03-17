@@ -1,0 +1,170 @@
+/* ErrorBoundary Styles */
+
+@import './global-variables.css';
+
+/* Clases personalizadas para ErrorBoundary */
+.error-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--champagne) 0%, var(--champagne-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.error-card {
+  max-width: 28rem;
+  width: 100%;
+  background: var(--optic-white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  text-align: center;
+  border: 1px solid rgba(166, 124, 82, 0.1);
+}
+
+.error-icon-wrapper {
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  background: rgba(166, 124, 82, 0.1);
+}
+
+.error-icon {
+  height: 2rem;
+  width: 2rem;
+  color: var(--soft-bronze);
+}
+
+.error-title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--carbon-black);
+  margin-bottom: 1rem;
+}
+
+.error-description {
+  font-family: var(--font-body);
+  color: var(--carbon-black);
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.error-details {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.error-details summary {
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--carbon-black);
+  opacity: 0.6;
+  font-family: var(--font-body);
+}
+
+.error-details summary:hover {
+  color: var(--carbon-black);
+}
+
+.error-details-content {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: var(--champagne-light);
+  border-radius: 8px;
+  font-size: var(--font-size-xs);
+  font-family: 'Courier New', monospace;
+  color: var(--carbon-black);
+  opacity: 0.8;
+  overflow: auto;
+  max-height: 8rem;
+}
+
+.error-details-label {
+  font-weight: 700;
+  color: var(--soft-bronze);
+  margin-bottom: 0.5rem;
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .error-actions {
+    flex-direction: row;
+  }
+}
+
+.error-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--btn-border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+}
+
+.error-btn-secondary {
+  border: 1px solid rgba(166, 124, 82, 0.3);
+  background: var(--optic-white);
+  color: var(--carbon-black);
+  box-shadow: var(--shadow-sm);
+}
+
+.error-btn-secondary:hover {
+  background: var(--champagne-light);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.error-btn-primary {
+  border: 1px solid transparent;
+  background: var(--soft-bronze);
+  color: var(--optic-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.error-btn-primary:hover {
+  background: var(--bronze-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.error-btn:focus {
+  outline: 2px solid var(--soft-bronze);
+  outline-offset: 2px;
+}
+
+.error-contact {
+  margin-top: 1.5rem;
+  font-size: var(--font-size-xs);
+  color: var(--carbon-black);
+  opacity: 0.5;
+  font-family: var(--font-body);
+}
+
+.error-contact-link {
+  color: var(--soft-bronze);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.error-contact-link:hover {
+  color: var(--bronze-light);
+}

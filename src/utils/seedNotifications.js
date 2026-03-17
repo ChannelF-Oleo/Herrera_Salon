@@ -7,28 +7,26 @@ const notificationsData = [
   {
     id: "welcome-notification",
     title: "¡Bienvenido al Sistema D'Galú!",
-    message: "El sistema de notificaciones está funcionando correctamente. Aquí recibirás alertas importantes sobre reservas, productos y más.",
+    message: "El sistema de notificaciones está funcionando correctamente. Aquí recibirás alertas importantes sobre productos, servicios y más.",
     type: "system",
     priority: "low",
     targetRoles: ["admin", "manager", "staff"],
     readBy: [],
     isActive: true,
     createdAt: new Date(),
-    bookingId: null,
     userId: null
   },
   {
-    id: "new-booking-example",
-    title: "Nueva Reserva Recibida",
-    message: "María González ha reservado una cita para Manicura + Pedicura el 15 de diciembre a las 2:00 PM.",
-    type: "new_booking",
+    id: "whatsapp-booking-info",
+    title: "Nueva Forma de Agendar Citas",
+    message: "Ahora los clientes pueden agendar citas directamente por WhatsApp al 829-705-0408. ¡Es más fácil y rápido!",
+    type: "system_update",
     priority: "high",
     targetRoles: ["admin", "manager", "staff"],
     readBy: [],
     isActive: true,
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-    bookingId: "booking-example-1",
-    userId: "user-example-1"
+    userId: null
   },
   {
     id: "low-stock-alert",
@@ -44,30 +42,28 @@ const notificationsData = [
     userId: null
   },
   {
-    id: "payment-received",
-    title: "Pago Confirmado",
-    message: "Se ha recibido el pago de $75 por la reserva de Ana Martínez para servicios de pestañas.",
-    type: "payment_received",
+    id: "promotion-alert",
+    title: "Promoción Especial Diciembre",
+    message: "¡20% de descuento en todos los servicios de manicura durante diciembre! Los clientes pueden contactar por WhatsApp para agendar.",
+    type: "promotion",
     priority: "medium",
-    targetRoles: ["admin", "manager"],
+    targetRoles: ["admin", "manager", "staff"],
     readBy: [],
     isActive: true,
     createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000), // 6 horas atrás
-    bookingId: "booking-example-2",
-    userId: "user-example-2"
+    userId: null
   },
   {
-    id: "booking-cancelled",
-    title: "Reserva Cancelada",
-    message: "La cita de Laura Pérez para mañana a las 10:00 AM ha sido cancelada. El horario está ahora disponible.",
-    type: "booking_cancelled",
+    id: "service-update",
+    title: "Nuevo Servicio Disponible",
+    message: "Ahora ofrecemos tratamientos faciales con productos orgánicos. Los clientes pueden agendar por WhatsApp al 829-705-0408.",
+    type: "service_update",
     priority: "medium",
     targetRoles: ["admin", "manager", "staff"],
     readBy: [],
     isActive: true,
     createdAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutos atrás
-    bookingId: "booking-example-3",
-    userId: "user-example-3"
+    userId: null
   }
 ];
 
@@ -113,7 +109,6 @@ export const createNotification = async (notificationData) => {
       isActive: true,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
-      bookingId: notificationData.bookingId || null,
       userId: notificationData.userId || null,
       productId: notificationData.productId || null
     };

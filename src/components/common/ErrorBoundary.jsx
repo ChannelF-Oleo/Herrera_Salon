@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import '../../styles/ErrorBoundary.css';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -60,37 +61,37 @@ const ErrorFallback = ({ error, errorInfo, resetError }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+    <div className="error-page">
+      <div className="error-card">
         {/* Icono de error */}
-        <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-6">
-          <AlertTriangle className="h-8 w-8 text-red-600" />
+        <div className="error-icon-wrapper">
+          <AlertTriangle className="error-icon" />
         </div>
 
         {/* Título */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1 className="error-title">
           ¡Oops! Algo salió mal
         </h1>
 
         {/* Descripción */}
-        <p className="text-gray-600 mb-6">
+        <p className="error-description">
           Ha ocurrido un error inesperado. Nuestro equipo ha sido notificado y 
           estamos trabajando para solucionarlo.
         </p>
 
         {/* Detalles del error (solo en desarrollo) */}
         {process.env.NODE_ENV === 'development' && error && (
-          <details className="mb-6 text-left">
-            <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
+          <details className="error-details">
+            <summary>
               Ver detalles técnicos
             </summary>
-            <div className="mt-2 p-3 bg-gray-100 rounded text-xs font-mono text-gray-700 overflow-auto max-h-32">
-              <div className="font-bold text-red-600 mb-2">Error:</div>
-              <div className="mb-2">{error.toString()}</div>
+            <div className="error-details-content">
+              <div className="error-details-label">Error:</div>
+              <div style={{ marginBottom: '0.5rem' }}>{error.toString()}</div>
               {errorInfo && (
                 <>
-                  <div className="font-bold text-red-600 mb-2">Stack Trace:</div>
-                  <div className="whitespace-pre-wrap">{errorInfo.componentStack}</div>
+                  <div className="error-details-label">Stack Trace:</div>
+                  <div style={{ whiteSpace: 'pre-wrap' }}>{errorInfo.componentStack}</div>
                 </>
               )}
             </div>
@@ -98,32 +99,32 @@ const ErrorFallback = ({ error, errorInfo, resetError }) => {
         )}
 
         {/* Botones de acción */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="error-actions">
           <button
             onClick={handleReload}
-            className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            className="error-btn error-btn-secondary"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw style={{ height: '1rem', width: '1rem', marginRight: '0.5rem' }} />
             Recargar página
           </button>
           
           <button
             onClick={handleGoHome}
-            className="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm bg-rose-600 text-sm font-medium text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            className="error-btn error-btn-primary"
           >
-            <Home className="h-4 w-4 mr-2" />
+            <Home style={{ height: '1rem', width: '1rem', marginRight: '0.5rem' }} />
             Ir al inicio
           </button>
         </div>
 
         {/* Información de contacto */}
-        <p className="mt-6 text-xs text-gray-500">
+        <p className="error-contact">
           Si el problema persiste, contáctanos en{' '}
           <a 
-            href="mailto:soporte@dgalu.com" 
-            className="text-rose-600 hover:text-rose-500"
+            href="mailto:soporte@fireforgerd.com" 
+            className="error-contact-link"
           >
-            soporte@dgalu.com
+            soporte@fireforgerd.com
           </a>
         </p>
       </div>

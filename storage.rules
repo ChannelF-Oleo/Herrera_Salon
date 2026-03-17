@@ -119,13 +119,6 @@ service firebase.storage {
       allow delete: if isAuthenticated() || isAdmin();
     }
 
-    // ===== BOOKINGS FOLDER =====
-    match /bookings/{bookingId}/{allPaths=**} {
-      allow read: if isStaffOrAbove();
-      allow write: if isStaffOrAbove() && (isValidImageFile() || isValidDocumentFile());
-      allow delete: if isManagerOrAbove();
-    }
-
     // ===== NOTIFICATIONS FOLDER =====
     match /notifications/{allPaths=**} {
       allow read: if isStaffOrAbove();

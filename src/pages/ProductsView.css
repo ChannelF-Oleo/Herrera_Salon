@@ -3,23 +3,23 @@
    ========================================= */
 
 :root {
-  /* Products specific colors */
-  --products-card-bg: #ffffff;
-  --products-card-border: rgba(0, 0, 0, 0.05);
-  --products-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --products-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.15);
-  --products-search-bg: #ffffff;
-  --products-search-border: rgba(0, 0, 0, 0.08);
-  --products-accent: #a855f7;
-  --products-accent-light: #c084fc;
+  /* Products specific colors - usando paleta global */
+  --products-card-bg: var(--optic-white);
+  --products-card-border: rgba(166, 124, 82, 0.08);
+  --products-card-shadow: var(--shadow-sm);
+  --products-card-shadow-hover: var(--shadow-lg);
+  --products-search-bg: var(--optic-white);
+  --products-search-border: rgba(166, 124, 82, 0.1);
+  --products-accent: var(--soft-bronze);
+  --products-accent-light: var(--bronze-light);
   
-  /* Dark theme overrides */
-  --dark-products-card-bg: rgba(31, 41, 55, 0.8);
-  --dark-products-card-border: rgba(75, 85, 99, 0.3);
-  --dark-products-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --dark-products-card-shadow-hover: 0 12px 28px rgba(0, 0, 0, 0.5);
-  --dark-products-search-bg: rgba(31, 41, 55, 0.8);
-  --dark-products-search-border: rgba(75, 85, 99, 0.4);
+  /* Dark theme overrides - usando paleta global */
+  --dark-products-card-bg: var(--carbon-soft);
+  --dark-products-card-border: rgba(166, 124, 82, 0.2);
+  --dark-products-card-shadow: var(--shadow-md);
+  --dark-products-card-shadow-hover: var(--shadow-xl);
+  --dark-products-search-bg: var(--carbon-soft);
+  --dark-products-search-border: rgba(166, 124, 82, 0.3);
 }
 
 /* =========================================

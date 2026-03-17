@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { ThemeProvider } from "../context/ThemeContext";
 import {
   LayoutDashboard,
-  Calendar,
   Scissors,
   ShoppingBag,
   GraduationCap,
@@ -18,7 +17,6 @@ import Sidebar from "../components/layout/Sidebar";
 import TopBar from "../components/layout/TopBar";
 import DashboardView from "./DashboardView";
 import ServicesView from "./ServicesView";
-import BookingsView from "./BookingsView";
 import ProductsView from "./ProductsView";
 import AcademyView from "./AcademyView";
 import UsersView from "./UsersView";
@@ -29,8 +27,8 @@ import OrdersView from "./OrdersView";
 // Importar utilidades de roles
 import { getMenuItemsByRole } from "../utils/rolePermissions";
 
-// Estilos
-import "./AdminDashboard.css";
+// Estilos optimizados
+import "../styles/dashboard.css";
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -49,7 +47,6 @@ const AdminDashboard = () => {
   // Iconos para los items del menú
   const menuIcons = {
     dashboard: LayoutDashboard,
-    bookings: Calendar,
     services: Scissors,
     products: ShoppingBag,
     gallery: Image,
@@ -104,9 +101,6 @@ const AdminDashboard = () => {
       case "services":
         return <ServicesView userRole={userRole} />;
 
-      case "bookings":
-        return <BookingsView userRole={userRole} />;
-
       case "products":
         return <ProductsView userRole={userRole} />;
 
@@ -148,7 +142,7 @@ const AdminDashboard = () => {
 
           <div
             className={`admin-layout__main ${
-              isSidebarCollapsed ? "admin-layout__main--expanded" : ""
+              isSidebarCollapsed ? "sidebar-collapsed" : ""
             }`}
           >
             <TopBar
@@ -185,12 +179,13 @@ const AdminDashboard = () => {
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
           isSidebarCollapsed={isSidebarCollapsed}
+          toggleSidebarCollapse={toggleSidebarCollapse}
           onLogout={handleLogout}
         />
 
         <div
           className={`admin-layout__main ${
-            isSidebarCollapsed ? "admin-layout__main--expanded" : ""
+            isSidebarCollapsed ? "sidebar-collapsed" : ""
           }`}
         >
           <TopBar

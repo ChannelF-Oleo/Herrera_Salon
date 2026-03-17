@@ -1,6 +1,6 @@
 // Navbar.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, X, Calendar, User } from "lucide-react";
+import { Menu, X, MessageCircle, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../common/NotificationBell";
 import CartIcon from "../cart/CartIcon";
@@ -17,6 +17,15 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Función helper para navegación con scroll
+  const navigateWithScroll = (path) => {
+    navigate(path);
+    // Pequeño delay para asegurar que la navegación se complete antes del scroll
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+  };
+
   const navItems = [
     { name: "Servicios", path: "/services" },
     { name: "Productos", path: "/products" },
@@ -30,8 +39,8 @@ const Navbar = () => {
       <div className="navbar-container">
         <div className="navbar-content">
           {/* LOGO */}
-          <button onClick={() => navigate("/")} className="navbar-logo">
-            D'Galú
+          <button onClick={() => navigateWithScroll("/")} className="navbar-logo">
+            Herrera Beauty Studio
           </button>
 
           {/* MENU DESKTOP */}
@@ -39,7 +48,7 @@ const Navbar = () => {
             {navItems.map((item) => (
               <button
                 key={item.name}
-                onClick={() => navigate(item.path)}
+                onClick={() => navigateWithScroll(item.path)}
                 className="nav-link group"
               >
                 {item.name}
@@ -54,23 +63,34 @@ const Navbar = () => {
             <CartIcon />
 
             {/* CTA DESKTOP */}
-            <button
-              onClick={() => navigate("/booking")}
+            <a
+              href="https://wa.me/18297050408?text=¡Buenas!%20Me%20gustaría%20agendar%20una%20cita"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-nav-cta"
             >
-              <Calendar className="w-4 h-4" />
-              <span>Reservar</span>
-            </button>
+              <MessageCircle className="w-4 h-4" />
+              <span>Agendar</span>
+            </a>
 
             {/* LOGIN DESKTOP */}
 
           </div>
 
           {/* BOTON_MENU_MOVIL */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-3">
+            {/* Notificaciones móvil */}
+            <NotificationBell />
+            
+            {/* Carrito móvil */}
+            <CartIcon />
+            
+            {/* Botón menú */}
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="mobile-menu-btn"
+              aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={isOpen}
             >
               {isOpen ? (
                 <X className="h-6 w-6" />
@@ -89,7 +109,7 @@ const Navbar = () => {
             <button
               key={item.name}
               onClick={() => {
-                navigate(item.path);
+                navigateWithScroll(item.path);
                 setIsOpen(false);
               }}
               className="mobile-nav-link"
@@ -98,33 +118,31 @@ const Navbar = () => {
             </button>
           ))}
 
-          {/* CARRITO MOBILE - Usa el contexto directamente */}
-          <div className="flex items-center justify-center py-2">
-            <CartIcon />
-          </div>
+          {/* Separador */}
+          <div className="border-t border-gray-200 my-4"></div>
 
           {/* CTA MOBILE */}
-          <button
-            onClick={() => {
-              navigate("/booking");
-              setIsOpen(false);
-            }}
+          <a
+            href="https://wa.me/18297050408?text=¡Buenas!%20Me%20gustaría%20agendar%20una%20cita"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-nav-cta w-full mt-4"
+            onClick={() => setIsOpen(false)}
           >
-            <Calendar className="w-5 h-5" />
-            Reservar
-          </button>
+            <MessageCircle className="w-5 h-5" />
+            Agendar Cita
+          </a>
 
           {/* LOGIN MOBILE */}
           <button
             onClick={() => {
-              navigate("/login");
+              navigateWithScroll("/login");
               setIsOpen(false);
             }}
-            className="mobile-nav-link flex items-center gap-2 mt-2"
+            className="mobile-nav-link flex items-center justify-center gap-2 mt-2"
           >
             <User size={20} />
-            Login
+            Acceso Admin
           </button>
         </div>
       </div>

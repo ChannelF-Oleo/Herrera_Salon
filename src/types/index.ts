@@ -59,27 +59,6 @@ export const productSchema = z.object({
   updatedAt: timestampSchema,
 });
 
-// Booking schemas
-export const bookingStatusSchema = z.enum(['pending', 'confirmed', 'completed', 'cancelled']);
-
-export const bookingSchema = z.object({
-  id: z.string(),
-  customerId: z.string(),
-  customerName: z.string().min(1, 'Customer name is required'),
-  customerPhone: z.string().min(1, 'Customer phone is required'),
-  customerEmail: z.string().email(),
-  serviceId: z.string(),
-  subserviceId: z.string().optional(),
-  date: timestampSchema,
-  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Invalid time format'),
-  duration: z.number().min(1, 'Duration must be at least 1 minute'),
-  totalPrice: z.number().min(0, 'Total price must be positive'),
-  status: bookingStatusSchema,
-  notes: z.string().optional(),
-  createdAt: timestampSchema,
-  updatedAt: timestampSchema,
-});
-
 // Course schemas
 export const courseFacilitatorSchema = z.object({
   name: z.string().min(1, 'Facilitator name is required'),
@@ -180,17 +159,6 @@ export const productFormSchema = productSchema.omit({
   minStock: z.string().transform((val) => parseInt(val)),
 });
 
-export const bookingFormSchema = bookingSchema.omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true,
-  date: true 
-}).extend({
-  date: z.string().transform((val) => new Date(val)),
-  totalPrice: z.string().transform((val) => parseFloat(val)),
-  duration: z.string().transform((val) => parseInt(val)),
-});
-
 export const courseFormSchema = courseSchema.omit({ 
   id: true, 
   createdAt: true, 
@@ -212,8 +180,6 @@ export type UserRole = z.infer<typeof userRoleSchema>;
 export type Service = z.infer<typeof serviceSchema>;
 export type Subservice = z.infer<typeof subserviceSchema>;
 export type Product = z.infer<typeof productSchema>;
-export type Booking = z.infer<typeof bookingSchema>;
-export type BookingStatus = z.infer<typeof bookingStatusSchema>;
 export type Course = z.infer<typeof courseSchema>;
 export type CourseModality = z.infer<typeof courseModalitySchema>;
 export type Order = z.infer<typeof orderSchema>;
@@ -238,5 +204,4 @@ export type ServiceFormData = {
   }>;
 };
 export type ProductFormData = z.infer<typeof productFormSchema>;
-export type BookingFormData = z.infer<typeof bookingFormSchema>;
 export type CourseFormData = z.infer<typeof courseFormSchema>;

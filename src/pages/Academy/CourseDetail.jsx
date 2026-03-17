@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../config/firebase";
 import { useAuth } from "../../context/AuthContext";
-import { emailService } from "../../services/emailService";
 import CourseEnrollmentModal from "../../components/ui/CourseEnrollmentModal";
 import { 
   ArrowLeft, 
@@ -126,29 +125,14 @@ const CourseDetail = () => {
 
       console.log('Enrollment created successfully:', enrollmentRef.id);
 
-      // Enviar email de confirmación
-      try {
-        await emailService.sendCourseEnrollmentConfirmation({
-          userEmail: formData.email,
-          studentName: formData.fullName,
-          courseTitle: course.title,
-          instructor: course.instructor || 'D\'Galú Academy',
-          duration: course.duration || 'Por definir',
-          price: `RD$ ${course.price || 0}`,
-          startDate: course.startDate || new Date().toISOString(),
-          enrollmentId: enrollmentRef.id
-        });
-        console.log('Confirmation email sent successfully');
-      } catch (emailError) {
-        console.error('Error sending enrollment confirmation email:', emailError);
-        // No fallar la inscripción por error de email
-      }
+      // Nota: Email de confirmación se enviará manualmente por el administrador
+      console.log('Enrollment confirmation will be sent manually by admin');
 
       setIsEnrolled(true);
       setShowEnrollmentModal(false);
       
       // Mostrar mensaje de éxito
-      alert(`¡Inscripción exitosa!\n\nHemos enviado un email de confirmación a ${formData.email} con los detalles del curso.\n\nNos pondremos en contacto contigo pronto para coordinar el pago.`);
+      alert(`¡Inscripción exitosa!\n\nTu inscripción ha sido registrada exitosamente.\n\nNos pondremos en contacto contigo pronto para coordinar el pago y enviarte los detalles del curso.`);
       
     } catch (error) {
       console.error('Error enrolling in course:', error);

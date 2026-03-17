@@ -202,12 +202,6 @@ export class BusinessError extends Error {
 }
 
 // Errores específicos del dominio
-export class BookingConflictError extends BusinessError {
-  constructor(message = 'El horario seleccionado ya no está disponible') {
-    super(message, 'BOOKING_CONFLICT', false);
-  }
-}
-
 export class InsufficientStockError extends BusinessError {
   constructor(message = 'Stock insuficiente para completar la operación') {
     super(message, 'INSUFFICIENT_STOCK', false);

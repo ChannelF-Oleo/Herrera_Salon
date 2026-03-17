@@ -4,18 +4,18 @@ import "./StatCard.css";
 
 const StatCard = ({ title, value, icon: Icon, color, trend }) => {
   return (
-    <div className="stat-card-container">
+    <div className="stat-card">
       <div
-        className="stat-icon-wrapper"
+        className="stat-card-icon"
         style={{ backgroundColor: color }}
       >
         <Icon size={24} />
       </div>
-      <div>
-        <p className="stat-title">{title}</p>
-        <h3 className="stat-value">{value}</h3>
+      <div className="stat-card-content">
+        <p className="stat-card-title">{title}</p>
+        <h3 className="stat-card-value">{value}</h3>
         {trend && (
-          <span className="stat-trend">
+          <span className="stat-card-trend">
             <TrendingUp size={10} /> {trend}
           </span>
         )}

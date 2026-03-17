@@ -71,27 +71,6 @@ export const productSchema = z.object({
   updatedAt: timestampSchema
 });
 
-// Booking Schema
-export const bookingSchema = z.object({
-  id: z.string().min(1, 'ID es requerido'),
-  customerId: z.string().min(1, 'ID del cliente es requerido'),
-  customerName: z.string().min(1, 'Nombre del cliente es requerido'),
-  customerPhone: phoneSchema,
-  customerEmail: emailSchema,
-  serviceId: z.string().min(1, 'ID del servicio es requerido'),
-  subserviceId: z.string().optional(),
-  date: timestampSchema,
-  time: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de hora inválido (HH:MM)'),
-  duration: z.number().min(15, 'La duración mínima es 15 minutos'),
-  totalPrice: z.number().min(0, 'El precio total debe ser mayor o igual a 0'),
-  status: z.enum(['pending', 'confirmed', 'completed', 'cancelled'], {
-    errorMap: () => ({ message: 'Estado de reserva inválido' })
-  }),
-  notes: z.string().optional(),
-  createdAt: timestampSchema,
-  updatedAt: timestampSchema
-});
-
 // Course Facilitator Schema
 export const facilitatorSchema = z.object({
   name: z.string().min(1, 'Nombre del facilitador es requerido'),
@@ -173,12 +152,6 @@ export const createServiceSchema = serviceSchema.omit({
 });
 
 export const createProductSchema = productSchema.omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
-});
-
-export const createBookingSchema = bookingSchema.omit({ 
   id: true, 
   createdAt: true, 
   updatedAt: true 
