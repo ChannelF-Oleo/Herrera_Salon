@@ -310,11 +310,6 @@ const CourseDetail = () => {
               <section className="course-detail__section">
                 <h2 className="course-detail__section-title">Instructor</h2>
                 <div className="course-detail__instructor">
-                  <img
-                    src={course.instructorImage || 'https://images.unsplash.com/photo-1494790108755-2616b612b786?auto=format&fit=crop&w=400&q=80'}
-                    alt={course.instructor}
-                    className="course-detail__instructor-image"
-                  />
                   <div className="course-detail__instructor-info">
                     <h3>{course.instructor}</h3>
                     <p>{course.instructorBio}</p>

@@ -3,9 +3,7 @@ import {
   GraduationCap,
   Plus,
   Users,
-  Calendar,
   Edit2,
-  MapPin,
   Package,
   Clock,
 } from "lucide-react";
@@ -24,7 +22,8 @@ import { db } from "../config/firebase"; // Ajusta ruta segun tu estructura
 import { hasPermission } from "../utils/rolePermissions"; // Ajusta ruta
 import CourseModal from "../components/ui/CourseModal";
 import StudentModal from "../components/ui/StudentModal";
-import "./AcademyView.css"; // Tu CSS existente
+import "../styles/global-variables.css";
+import "./AcademyView.css";
 
 const AcademyView = ({ userRole }) => {
   const [courses, setCourses] = useState([]);
@@ -132,15 +131,15 @@ const AcademyView = ({ userRole }) => {
   };
 
   return (
-    <div className="academy-view p-6 max-w-7xl mx-auto">
+    <div className="academy-view">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <GraduationCap className="text-purple-600 w-8 h-8" />
-            Academia D-Galu
+      <div className="academy-view__header">
+        <div className="academy-view__header-content">
+          <h1 className="academy-view__title">
+            <GraduationCap className="academy-view__title-icon" />
+            Herrera Academy
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="academy-view__subtitle">
             Gestión profesional de cursos y alumnado
           </p>
         </div>
@@ -152,7 +151,7 @@ const AcademyView = ({ userRole }) => {
                 ? handleOpenCourseModal()
                 : handleOpenStudentModal()
             }
-            className="bg-purple-600 text-white px-5 py-2.5 rounded-xl hover:bg-purple-700 transition-all shadow-lg hover:shadow-purple-200 flex items-center gap-2 font-medium"
+            className="academy-view__add-btn"
           >
             <Plus size={20} />
             {activeTab === "courses" ? "Nuevo Curso" : "Nuevo Estudiante"}
@@ -161,23 +160,19 @@ const AcademyView = ({ userRole }) => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit mb-8">
+      <div className="academy-view__tabs">
         <button
           onClick={() => setActiveTab("courses")}
-          className={`px-6 py-2 rounded-lg font-medium transition-all ${
-            activeTab === "courses"
-              ? "bg-white text-purple-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+          className={`academy-view__tab ${
+            activeTab === "courses" ? "academy-view__tab--active" : ""
           }`}
         >
           Cursos
         </button>
         <button
           onClick={() => setActiveTab("students")}
-          className={`px-6 py-2 rounded-lg font-medium transition-all ${
-            activeTab === "students"
-              ? "bg-white text-purple-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+          className={`academy-view__tab ${
+            activeTab === "students" ? "academy-view__tab--active" : ""
           }`}
         >
           Estudiantes
@@ -186,69 +181,63 @@ const AcademyView = ({ userRole }) => {
 
       {/* Content */}
       {loading ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600"></div>
+        <div className="academy-view__loading">
+          <div className="academy-view__spinner"></div>
         </div>
       ) : activeTab === "courses" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="academy-view__courses-grid">
           {courses.map((course) => (
-            <div
-              key={course.id}
-              className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow overflow-hidden group flex flex-col"
-            >
-              <div className="relative h-48 bg-gray-200">
+            <div key={course.id} className="academy-view__course-card">
+              <div className="academy-view__course-header">
                 {course.image ? (
                   <img
                     src={course.image}
                     alt={course.title}
-                    className="w-full h-full object-cover"
+                    className="academy-view__course-image"
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-full text-gray-400 bg-gray-100">
+                  <div className="academy-view__course-placeholder">
                     <GraduationCap size={48} />
                   </div>
                 )}
-                <div className="absolute top-3 right-3 flex gap-2">
-                  <span className="bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md text-gray-700 shadow-sm border border-gray-100">
+                <div className="academy-view__course-badges">
+                  <span className="academy-view__course-badge">
                     {course.modality || "Presencial"}
                   </span>
                 </div>
               </div>
 
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2">
-                  <h3
-                    className="font-bold text-lg text-gray-900 line-clamp-1"
-                    title={course.title}
-                  >
+              <div className="academy-view__course-content">
+                <div className="academy-view__course-title-section">
+                  <h3 className="academy-view__course-title" title={course.title}>
                     {course.title}
                   </h3>
-                  <span className="text-purple-700 font-bold bg-purple-50 px-2 py-1 rounded text-sm">
+                  <span className="academy-view__course-price">
                     RD$ {course.price}
                   </span>
                 </div>
 
-                <p className="text-gray-500 text-sm mb-4 line-clamp-2 flex-1">
+                <p className="academy-view__course-description">
                   {course.description}
                 </p>
 
-                <div className="space-y-2 text-sm text-gray-600 mb-5 pt-4 border-t border-gray-50">
-                  <div className="flex items-center gap-2">
-                    <Clock size={16} className="text-purple-500" />
-                    <span className="truncate">
+                <div className="academy-view__course-info">
+                  <div className="academy-view__course-info-item">
+                    <Clock size={16} />
+                    <span className="academy-view__course-info-text">
                       {course.schedule || "Horario pendiente"}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <div className="flex items-center gap-2">
-                      <Users size={16} className="text-purple-500" />
+                  <div className="academy-view__course-info-row">
+                    <div className="academy-view__course-info-item">
+                      <Users size={16} />
                       <span>
                         Cupo: {course.studentsCount || 0}/
                         {course.capacity || "∞"}
                       </span>
                     </div>
                     {course.includesMaterials && (
-                      <div className="flex items-center gap-1 text-green-600 text-xs bg-green-50 px-2 py-0.5 rounded-full">
+                      <div className="academy-view__materials-badge">
                         <Package size={12} /> Materiales
                       </div>
                     )}
@@ -258,7 +247,7 @@ const AcademyView = ({ userRole }) => {
                 {canManage && (
                   <button
                     onClick={() => handleOpenCourseModal(course)}
-                    className="w-full py-2.5 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-purple-200 hover:text-purple-700 transition-all font-medium flex items-center justify-center gap-2"
+                    className="academy-view__edit-btn"
                   >
                     <Edit2 size={16} /> Editar Curso
                   </button>
@@ -268,30 +257,30 @@ const AcademyView = ({ userRole }) => {
           ))}
         </div>
       ) : (
-        // Tabla de Estudiantes (Simplificada para el ejemplo)
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50 text-gray-900 font-semibold uppercase text-xs">
+        // Tabla de Estudiantes
+        <div className="academy-view__students-table">
+          <table className="academy-view__table">
+            <thead className="academy-view__table-header">
               <tr>
-                <th className="px-6 py-4">Estudiante</th>
-                <th className="px-6 py-4">Curso</th>
-                <th className="px-6 py-4">Estado</th>
-                <th className="px-6 py-4 text-right">Acción</th>
+                <th className="academy-view__table-th">Estudiante</th>
+                <th className="academy-view__table-th">Curso</th>
+                <th className="academy-view__table-th">Estado</th>
+                <th className="academy-view__table-th academy-view__table-th--right">Acción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="academy-view__table-body">
               {students.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50/50">
-                  <td className="px-6 py-4 font-medium text-gray-900">
+                <tr key={student.id} className="academy-view__table-row">
+                  <td className="academy-view__table-td academy-view__table-td--name">
                     {student.name}
                   </td>
-                  <td className="px-6 py-4">{student.courseName}</td>
-                  <td className="px-6 py-4">
+                  <td className="academy-view__table-td">{student.courseName}</td>
+                  <td className="academy-view__table-td">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      className={`academy-view__status-badge ${
                         student.paymentStatus === "paid"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-yellow-100 text-yellow-800"
+                          ? "academy-view__status-badge--paid"
+                          : "academy-view__status-badge--pending"
                       }`}
                     >
                       {student.paymentStatus === "paid"
@@ -299,10 +288,10 @@ const AcademyView = ({ userRole }) => {
                         : "Pendiente"}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="academy-view__table-td academy-view__table-td--right">
                     <button
                       onClick={() => handleOpenStudentModal(student)}
-                      className="text-purple-600 hover:text-purple-800"
+                      className="academy-view__table-btn"
                     >
                       Editar
                     </button>

@@ -10,10 +10,14 @@ import {
   Layers,
   Star,
   AlertCircle,
+  Plus,
+  Trash2,
+  BookOpen,
 } from "lucide-react";
 import Portal from "./Portal";
 import ImageUploader from "../shared/ImageUploader";
 import { createCourseSchema } from "../../types/schemas";
+import "../../styles/CourseModal.css";
 
 const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
   // Estado inicial con TODOS los campos necesarios
@@ -21,6 +25,7 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
     title: "",
     description: "",
     instructor: "",
+    instructorBio: "",
     price: "",
     duration: "",
     startDate: "",
@@ -35,11 +40,92 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
     level: "Principiante",
     modules: 4,
     featured: false,
+    // Curriculum/Temario
+    curriculum: [
+      {
+        module: 1,
+        title: "Introducción",
+        duration: "2 horas",
+        topics: ["Conceptos básicos", "Herramientas necesarias"]
+      }
+    ],
+    // Campos adicionales para vista detallada
+    requirements: [],
+    benefits: [],
+    rating: 5.0,
+    students: 0,
+    certificate: true,
   };
 
   const [formData, setFormData] = useState(initialFormState);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Funciones para manejar curriculum
+  const addCurriculumModule = () => {
+    const newModule = {
+      module: formData.curriculum.length + 1,
+      title: "",
+      duration: "",
+      topics: [""]
+    };
+    setFormData({
+      ...formData,
+      curriculum: [...formData.curriculum, newModule]
+    });
+  };
+
+  const removeCurriculumModule = (index) => {
+    const newCurriculum = formData.curriculum.filter((_, i) => i !== index);
+    // Reordenar números de módulo
+    const reorderedCurriculum = newCurriculum.map((module, i) => ({
+      ...module,
+      module: i + 1
+    }));
+    setFormData({
+      ...formData,
+      curriculum: reorderedCurriculum
+    });
+  };
+
+  const updateCurriculumModule = (index, field, value) => {
+    const newCurriculum = [...formData.curriculum];
+    newCurriculum[index] = {
+      ...newCurriculum[index],
+      [field]: value
+    };
+    setFormData({
+      ...formData,
+      curriculum: newCurriculum
+    });
+  };
+
+  const addTopicToModule = (moduleIndex) => {
+    const newCurriculum = [...formData.curriculum];
+    newCurriculum[moduleIndex].topics.push("");
+    setFormData({
+      ...formData,
+      curriculum: newCurriculum
+    });
+  };
+
+  const removeTopicFromModule = (moduleIndex, topicIndex) => {
+    const newCurriculum = [...formData.curriculum];
+    newCurriculum[moduleIndex].topics = newCurriculum[moduleIndex].topics.filter((_, i) => i !== topicIndex);
+    setFormData({
+      ...formData,
+      curriculum: newCurriculum
+    });
+  };
+
+  const updateTopicInModule = (moduleIndex, topicIndex, value) => {
+    const newCurriculum = [...formData.curriculum];
+    newCurriculum[moduleIndex].topics[topicIndex] = value;
+    setFormData({
+      ...formData,
+      curriculum: newCurriculum
+    });
+  };
 
   // Listas de opciones
   const categories = [
@@ -137,35 +223,35 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
 
   return (
     <Portal>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
-          <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
-            <h2 className="text-xl font-bold text-gray-800">
+      <div className="course-modal">
+        <div className="course-modal__container">
+          <div className="course-modal__header">
+            <h2 className="course-modal__title">
               {editingCourse ? "Editar Curso" : "Crear Nuevo Curso"}
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="course-modal__close-btn"
             >
               <X size={24} />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="course-modal__form">
             {/* Mostrar errores generales */}
             {errors.general && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-                <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+              <div className="course-modal__error">
+                <AlertCircle className="course-modal__error-icon" size={20} />
                 <div>
-                  <p className="text-sm font-medium text-red-800">Error</p>
-                  <p className="text-sm text-red-700">{errors.general}</p>
+                  <p className="course-modal__error-title">Error</p>
+                  <p className="course-modal__error-message">{errors.general}</p>
                 </div>
               </div>
             )}
 
             {/* Sección Imagen */}
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="course-modal__image-section">
+              <label className="course-modal__label">
                 Portada del Curso
               </label>
               <ImageUploader
@@ -176,16 +262,16 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
             </div>
 
             {/* Información Principal */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="course-modal__grid">
               {/* Título */}
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field course-modal__field--full">
+                <label className="course-modal__label">
                   Nombre del Curso
                 </label>
                 <input
                   type="text"
                   required
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.title}
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
@@ -194,12 +280,12 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
               </div>
 
               {/* Categoría y Nivel (NUEVOS) */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <Tag size={16} /> Categoría
                 </label>
                 <select
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__select"
                   value={formData.category}
                   onChange={(e) =>
                     setFormData({ ...formData, category: e.target.value })
@@ -213,12 +299,12 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <Layers size={16} /> Nivel
                 </label>
                 <select
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__select"
                   value={formData.level}
                   onChange={(e) =>
                     setFormData({ ...formData, level: e.target.value })
@@ -233,13 +319,13 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
               </div>
 
               {/* Descripción */}
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field course-modal__field--full">
+                <label className="course-modal__label">
                   Descripción
                 </label>
                 <textarea
                   rows="3"
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__textarea"
                   value={formData.description}
                   onChange={(e) =>
                     setFormData({ ...formData, description: e.target.value })
@@ -248,12 +334,12 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
               </div>
 
               {/* Campos Específicos */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <MapPin size={16} /> Modalidad
                 </label>
                 <select
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__select"
                   value={formData.modality}
                   onChange={(e) =>
                     setFormData({ ...formData, modality: e.target.value })
@@ -265,15 +351,15 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 </select>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <Clock size={16} /> Horario
                 </label>
                 <input
                   type="text"
                   placeholder="Ej: Lun y Mié 6pm - 9pm"
                   required
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.schedule}
                   onChange={(e) =>
                     setFormData({ ...formData, schedule: e.target.value })
@@ -281,15 +367,15 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <Users size={16} /> Cupo Máximo
                 </label>
                 <input
                   type="number"
                   min="1"
                   required
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.capacity}
                   onChange={(e) =>
                     setFormData({ ...formData, capacity: e.target.value })
@@ -297,14 +383,14 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
+              <div className="course-modal__field">
+                <label className="course-modal__label course-modal__label--icon">
                   <Layers size={16} /> Cant. Módulos
                 </label>
                 <input
                   type="number"
                   min="1"
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.modules}
                   onChange={(e) =>
                     setFormData({ ...formData, modules: e.target.value })
@@ -313,61 +399,60 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
               </div>
 
               {/* Checkboxes: Materiales y Destacado */}
-              <div className="col-span-2 flex flex-col md:flex-row gap-4">
-                <div className="flex-1 flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-100">
-                  <input
-                    type="checkbox"
-                    id="materials"
-                    className="w-5 h-5 text-purple-600 rounded focus:ring-purple-500"
-                    checked={formData.includesMaterials}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        includesMaterials: e.target.checked,
-                      })
-                    }
-                  />
-                  <label
-                    htmlFor="materials"
-                    className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2"
-                  >
-                    <Package size={18} className="text-purple-600" />
-                    Incluye Materiales
-                  </label>
-                </div>
-
-                <div className="flex-1 flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                  <input
-                    type="checkbox"
-                    id="featured"
-                    className="w-5 h-5 text-yellow-600 rounded focus:ring-yellow-500"
-                    checked={formData.featured}
-                    onChange={(e) =>
-                      setFormData({ ...formData, featured: e.target.checked })
-                    }
-                  />
-                  <label
-                    htmlFor="featured"
-                    className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2"
-                  >
-                    <Star
-                      size={18}
-                      className="text-yellow-600 fill-yellow-600"
+              <div className="course-modal__field course-modal__field--full">
+                <div className="course-modal__checkboxes">
+                  <div className="course-modal__checkbox-group course-modal__checkbox-group--materials">
+                    <input
+                      type="checkbox"
+                      id="materials"
+                      className="course-modal__checkbox"
+                      checked={formData.includesMaterials}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          includesMaterials: e.target.checked,
+                        })
+                      }
                     />
-                    Destacado en Home
-                  </label>
+                    <label
+                      htmlFor="materials"
+                      className="course-modal__checkbox-label"
+                    >
+                      <Package size={18} />
+                      Incluye Materiales
+                    </label>
+                  </div>
+
+                  <div className="course-modal__checkbox-group course-modal__checkbox-group--featured">
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      className="course-modal__checkbox"
+                      checked={formData.featured}
+                      onChange={(e) =>
+                        setFormData({ ...formData, featured: e.target.checked })
+                      }
+                    />
+                    <label
+                      htmlFor="featured"
+                      className="course-modal__checkbox-label"
+                    >
+                      <Star size={18} />
+                      Destacado en Home
+                    </label>
+                  </div>
                 </div>
               </div>
 
               {/* Resto de campos estándar */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field">
+                <label className="course-modal__label">
                   Precio (RD$)
                 </label>
                 <input
                   type="number"
                   required
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.price}
                   onChange={(e) =>
                     setFormData({ ...formData, price: e.target.value })
@@ -375,13 +460,13 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field">
+                <label className="course-modal__label">
                   Instructor
                 </label>
                 <input
                   type="text"
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.instructor}
                   onChange={(e) =>
                     setFormData({ ...formData, instructor: e.target.value })
@@ -389,14 +474,14 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field">
+                <label className="course-modal__label">
                   Duración (Texto)
                 </label>
                 <input
                   type="text"
                   placeholder="Ej: 4 Semanas"
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.duration}
                   onChange={(e) =>
                     setFormData({ ...formData, duration: e.target.value })
@@ -404,33 +489,153 @@ const CourseModal = ({ isOpen, onClose, onSave, editingCourse }) => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="course-modal__field">
+                <label className="course-modal__label">
                   Fecha Inicio
                 </label>
                 <input
                   type="date"
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="course-modal__input"
                   value={formData.startDate}
                   onChange={(e) =>
                     setFormData({ ...formData, startDate: e.target.value })
                   }
                 />
               </div>
+
+              {/* Instructor Bio */}
+              <div className="course-modal__field">
+                <label className="course-modal__label">
+                  Biografía del Instructor
+                </label>
+                <textarea
+                  rows="2"
+                  className="course-modal__textarea"
+                  value={formData.instructorBio}
+                  onChange={(e) =>
+                    setFormData({ ...formData, instructorBio: e.target.value })
+                  }
+                  placeholder="Breve descripción del instructor..."
+                />
+              </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-6 border-t">
+            {/* Curriculum/Temario Section */}
+            <div className="course-modal__curriculum-section">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <BookOpen size={20} />
+                  Temario del Curso
+                </h3>
+                <button
+                  type="button"
+                  onClick={addCurriculumModule}
+                  className="course-modal__add-module-btn"
+                >
+                  <Plus size={16} />
+                  Agregar Módulo
+                </button>
+              </div>
+
+              <div className="course-modal__curriculum-list">
+                {formData.curriculum.map((module, moduleIndex) => (
+                  <div key={moduleIndex} className="course-modal__curriculum-module">
+                    <div className="course-modal__module-header">
+                      <h4 className="course-modal__module-title">
+                        Módulo {module.module}
+                      </h4>
+                      <button
+                        type="button"
+                        onClick={() => removeCurriculumModule(moduleIndex)}
+                        className="course-modal__remove-module-btn"
+                        disabled={formData.curriculum.length === 1}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+
+                    <div className="course-modal__module-fields">
+                      <div className="course-modal__module-field">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Título del Módulo
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                          value={module.title}
+                          onChange={(e) => updateCurriculumModule(moduleIndex, 'title', e.target.value)}
+                          placeholder="Ej: Introducción a las técnicas básicas"
+                        />
+                      </div>
+
+                      <div className="course-modal__module-field">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Duración
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                          value={module.duration}
+                          onChange={(e) => updateCurriculumModule(moduleIndex, 'duration', e.target.value)}
+                          placeholder="Ej: 2 horas"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="course-modal__topics-section">
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-sm font-medium text-gray-700">
+                          Temas del Módulo
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => addTopicToModule(moduleIndex)}
+                          className="course-modal__add-topic-btn"
+                        >
+                          <Plus size={14} />
+                          Agregar Tema
+                        </button>
+                      </div>
+
+                      <div className="course-modal__topics-list">
+                        {module.topics.map((topic, topicIndex) => (
+                          <div key={topicIndex} className="course-modal__topic-item">
+                            <input
+                              type="text"
+                              className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none"
+                              value={topic}
+                              onChange={(e) => updateTopicInModule(moduleIndex, topicIndex, e.target.value)}
+                              placeholder="Ej: Conceptos básicos y fundamentos"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeTopicFromModule(moduleIndex, topicIndex)}
+                              className="course-modal__remove-topic-btn"
+                              disabled={module.topics.length === 1}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="course-modal__actions">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                className="course-modal__cancel-btn"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 disabled:opacity-50"
+                className="course-modal__save-btn"
               >
                 <Save size={18} />
                 {loading ? "Guardando..." : "Guardar Curso"}

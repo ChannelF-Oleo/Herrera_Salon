@@ -36,8 +36,23 @@
   --font-size-4xl: 2.25rem;   /* 36px */
 
   /* =========================================
-     ESPACIADO REDUCIDO (Cards más pequeñas)
+     ESPACIADO SISTEMA COMPLETO
      ========================================= */
+  --space-xs: 0.25rem;    /* 4px */
+  --space-sm: 0.5rem;     /* 8px */
+  --space-md: 0.75rem;    /* 12px */
+  --space-lg: 1rem;       /* 16px */
+  --space-xl: 1.5rem;     /* 24px */
+  --space-2xl: 2rem;      /* 32px */
+  --space-3xl: 3rem;      /* 48px */
+  --space-4xl: 4rem;      /* 64px */
+
+  /* Radius system */
+  --radius-sm: 0.375rem;  /* 6px */
+  --radius-md: 0.5rem;    /* 8px */
+  --radius-lg: 0.75rem;   /* 12px */
+  
+  /* Container and layout */
   --container-max: 1200px;
   --section-padding: clamp(2rem, 4vw, 4rem);
   --element-gap: clamp(0.5rem, 1.5vw, 1rem);
