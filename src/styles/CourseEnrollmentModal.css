@@ -1,0 +1,444 @@
+/* =========================================
+   COURSE ENROLLMENT MODAL - OPTIMIZED STYLES
+   Uses global-variables.css system
+   ========================================= */
+
+@import './global-variables.css';
+
+/* =========================================
+   MODAL OVERLAY
+   ========================================= */
+.enrollment-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   MODAL CONTAINER
+   ========================================= */
+.enrollment-modal {
+  background: var(--optic-white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 28rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(166, 124, 82, 0.1);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================
+   MODAL HEADER
+   ========================================= */
+.enrollment-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--space-xl);
+  border-bottom: 1px solid rgba(166, 124, 82, 0.15);
+  position: sticky;
+  top: 0;
+  background: var(--optic-white);
+  z-index: 10;
+}
+
+.enrollment-modal__header-content h2 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--carbon-black);
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.enrollment-modal__header-content p {
+  font-size: var(--font-size-sm);
+  color: var(--soft-bronze);
+  margin: 0;
+  font-weight: 500;
+}
+
+.enrollment-modal__close-btn {
+  background: none;
+  border: none;
+  color: var(--carbon-black);
+  opacity: 0.6;
+  cursor: pointer;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.enrollment-modal__close-btn:hover:not(:disabled) {
+  opacity: 1;
+  background: rgba(166, 124, 82, 0.1);
+  transform: rotate(90deg);
+}
+
+.enrollment-modal__close-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+/* =========================================
+   COURSE INFO SECTION
+   ========================================= */
+.enrollment-modal__course-info {
+  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(135deg, var(--champagne-light), var(--champagne));
+  border-bottom: 1px solid rgba(166, 124, 82, 0.15);
+}
+
+.enrollment-modal__price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.enrollment-modal__price-label {
+  font-size: var(--font-size-sm);
+  color: var(--carbon-black);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.enrollment-modal__price {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  color: var(--soft-bronze);
+  font-family: var(--font-display);
+}
+
+.enrollment-modal__course-meta {
+  font-size: var(--font-size-xs);
+  color: var(--carbon-black);
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* =========================================
+   FORM SECTION
+   ========================================= */
+.enrollment-modal__form {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* =========================================
+   FORM FIELDS
+   ========================================= */
+.enrollment-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.enrollment-form__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--carbon-black);
+  margin: 0;
+}
+
+.enrollment-form__input-wrapper {
+  position: relative;
+}
+
+.enrollment-form__input-icon {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--soft-bronze);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.enrollment-form__input {
+  width: 100%;
+  padding: var(--space-md) var(--space-md) var(--space-md) 2.75rem;
+  border: 2px solid rgba(166, 124, 82, 0.2);
+  border-radius: var(--card-border-radius);
+  font-size: var(--font-size-base);
+  font-family: var(--font-body);
+  background: var(--optic-white);
+  color: var(--carbon-black);
+  transition: all var(--transition-fast);
+  outline: none;
+}
+
+.enrollment-form__input::placeholder {
+  color: var(--carbon-black);
+  opacity: 0.5;
+}
+
+.enrollment-form__input:focus {
+  border-color: var(--soft-bronze);
+  box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.1);
+  background: var(--champagne-light);
+}
+
+.enrollment-form__input--error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.enrollment-form__input--error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.enrollment-form__input:disabled {
+  background: var(--champagne-light);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================
+   ERROR MESSAGES
+   ========================================= */
+.enrollment-form__error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: #ef4444;
+  margin: 0;
+  font-weight: 500;
+}
+
+.enrollment-form__error svg {
+  flex-shrink: 0;
+}
+
+/* =========================================
+   HELP TEXT
+   ========================================= */
+.enrollment-form__help {
+  font-size: var(--font-size-xs);
+  color: var(--carbon-black);
+  opacity: 0.6;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* =========================================
+   INFO BOX
+   ========================================= */
+.enrollment-modal__info-box {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(147, 197, 253, 0.1));
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--card-border-radius);
+  padding: var(--space-lg);
+}
+
+.enrollment-modal__info-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.enrollment-modal__info-icon {
+  color: #3b82f6;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.enrollment-modal__info-text {
+  font-size: var(--font-size-sm);
+  color: #1e40af;
+}
+
+.enrollment-modal__info-title {
+  font-weight: 600;
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.enrollment-modal__info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.enrollment-modal__info-list li {
+  font-size: var(--font-size-xs);
+  color: #1e40af;
+  opacity: 0.9;
+}
+
+/* =========================================
+   FORM BUTTONS
+   ========================================= */
+.enrollment-modal__buttons {
+  display: flex;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+}
+
+.enrollment-modal__btn {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--card-border-radius);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.enrollment-modal__btn--cancel {
+  background: transparent;
+  color: var(--carbon-black);
+  border: 2px solid rgba(166, 124, 82, 0.2);
+}
+
+.enrollment-modal__btn--cancel:hover:not(:disabled) {
+  background: rgba(166, 124, 82, 0.1);
+  border-color: rgba(166, 124, 82, 0.3);
+  transform: translateY(-1px);
+}
+
+.enrollment-modal__btn--submit {
+  background: linear-gradient(135deg, var(--soft-bronze), var(--bronze-light));
+  color: var(--optic-white);
+  box-shadow: var(--shadow-md);
+}
+
+.enrollment-modal__btn--submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--bronze-dark), var(--soft-bronze));
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.enrollment-modal__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* =========================================
+   LOADING SPINNER
+   ========================================= */
+.enrollment-modal__spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: var(--optic-white);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 640px) {
+  .enrollment-modal-overlay {
+    padding: var(--space-md);
+  }
+  
+  .enrollment-modal {
+    max-width: 100%;
+  }
+  
+  .enrollment-modal__header,
+  .enrollment-modal__course-info,
+  .enrollment-modal__form {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+  
+  .enrollment-modal__buttons {
+    flex-direction: column;
+  }
+  
+  .enrollment-modal__btn {
+    width: 100%;
+  }
+  
+  .enrollment-modal__price {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* =========================================
+   ACCESSIBILITY
+   ========================================= */
+@media (prefers-reduced-motion: reduce) {
+  .enrollment-modal-overlay,
+  .enrollment-modal {
+    animation: none;
+  }
+  
+  .enrollment-modal__close-btn:hover {
+    transform: none;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.enrollment-modal__close-btn:focus-visible,
+.enrollment-form__input:focus-visible,
+.enrollment-modal__btn:focus-visible {
+  outline: 2px solid var(--soft-bronze);
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .enrollment-modal {
+    border: 2px solid var(--carbon-black);
+  }
+  
+  .enrollment-form__input {
+    border-width: 2px;
+  }
+  
+  .enrollment-modal__info-box {
+    border-width: 2px;
+  }
+}

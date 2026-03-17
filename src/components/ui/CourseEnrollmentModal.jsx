@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X, Save, User, Mail, Phone, AlertCircle, CheckCircle } from "lucide-react";
 import Portal from "./Portal";
+import "../../styles/CourseEnrollmentModal.css";
 
 const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) => {
   const [formData, setFormData] = useState({
@@ -89,21 +90,17 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
 
   return (
     <Portal>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="enrollment-modal-overlay">
+        <div className="enrollment-modal">
           {/* Header */}
-          <div className="flex justify-between items-center p-6 border-b sticky top-0 bg-white z-10">
-            <div>
-              <h2 className="text-xl font-bold text-gray-800">
-                Inscripción al Curso
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">
-                {course?.title}
-              </p>
+          <div className="enrollment-modal__header">
+            <div className="enrollment-modal__header-content">
+              <h2>Inscripción al Curso</h2>
+              <p>{course?.title}</p>
             </div>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="enrollment-modal__close-btn"
               disabled={loading}
             >
               <X size={24} />
@@ -111,39 +108,34 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
           </div>
 
           {/* Course Info */}
-          <div className="px-6 py-4 bg-purple-50 border-b">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Precio:</span>
-              <span className="text-2xl font-bold text-purple-600">
+          <div className="enrollment-modal__course-info">
+            <div className="enrollment-modal__price-row">
+              <span className="enrollment-modal__price-label">Precio:</span>
+              <span className="enrollment-modal__price">
                 ${course?.price}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="enrollment-modal__course-meta">
               Duración: {course?.duration} • {course?.modules} módulos
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="enrollment-modal__form">
             {/* Nombre Completo */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="enrollment-form__field">
+              <label className="enrollment-form__label">
                 Nombre Completo *
               </label>
-              <div className="relative">
-                <User
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
+              <div className="enrollment-form__input-wrapper">
+                <User className="enrollment-form__input-icon" size={18} />
                 <input
                   type="text"
                   name="fullName"
                   required
                   placeholder="Ej: María González"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-colors ${
-                    errors.fullName && touched.fullName
-                      ? "border-red-500"
-                      : "border-gray-300"
+                  className={`enrollment-form__input ${
+                    errors.fullName && touched.fullName ? "enrollment-form__input--error" : ""
                   }`}
                   value={formData.fullName}
                   onChange={handleChange}
@@ -152,7 +144,7 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
                 />
               </div>
               {errors.fullName && touched.fullName && (
-                <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                <p className="enrollment-form__error">
                   <AlertCircle size={12} />
                   {errors.fullName}
                 </p>
@@ -160,24 +152,19 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
             </div>
 
             {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="enrollment-form__field">
+              <label className="enrollment-form__label">
                 Email *
               </label>
-              <div className="relative">
-                <Mail
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
+              <div className="enrollment-form__input-wrapper">
+                <Mail className="enrollment-form__input-icon" size={18} />
                 <input
                   type="email"
                   name="email"
                   required
                   placeholder="tu@email.com"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-colors ${
-                    errors.email && touched.email
-                      ? "border-red-500"
-                      : "border-gray-300"
+                  className={`enrollment-form__input ${
+                    errors.email && touched.email ? "enrollment-form__input--error" : ""
                   }`}
                   value={formData.email}
                   onChange={handleChange}
@@ -186,7 +173,7 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
                 />
               </div>
               {errors.email && touched.email && (
-                <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                <p className="enrollment-form__error">
                   <AlertCircle size={12} />
                   {errors.email}
                 </p>
@@ -194,24 +181,19 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
             </div>
 
             {/* Teléfono */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="enrollment-form__field">
+              <label className="enrollment-form__label">
                 Teléfono *
               </label>
-              <div className="relative">
-                <Phone
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={18}
-                />
+              <div className="enrollment-form__input-wrapper">
+                <Phone className="enrollment-form__input-icon" size={18} />
                 <input
                   type="tel"
                   name="phone"
                   required
                   placeholder="8091234567"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 outline-none transition-colors ${
-                    errors.phone && touched.phone
-                      ? "border-red-500"
-                      : "border-gray-300"
+                  className={`enrollment-form__input ${
+                    errors.phone && touched.phone ? "enrollment-form__input--error" : ""
                   }`}
                   value={formData.phone}
                   onChange={handleChange}
@@ -220,23 +202,23 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
                 />
               </div>
               {errors.phone && touched.phone && (
-                <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                <p className="enrollment-form__error">
                   <AlertCircle size={12} />
                   {errors.phone}
                 </p>
               )}
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="enrollment-form__help">
                 Formato: 10 dígitos sin espacios ni guiones
               </p>
             </div>
 
             {/* Info adicional */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="text-blue-600 flex-shrink-0 mt-0.5" size={18} />
-                <div className="text-sm text-blue-800">
-                  <p className="font-medium mb-1">Próximos pasos:</p>
-                  <ul className="text-xs space-y-1 text-blue-700">
+            <div className="enrollment-modal__info-box">
+              <div className="enrollment-modal__info-content">
+                <CheckCircle className="enrollment-modal__info-icon" size={18} />
+                <div className="enrollment-modal__info-text">
+                  <p className="enrollment-modal__info-title">Próximos pasos:</p>
+                  <ul className="enrollment-modal__info-list">
                     <li>• Recibirás un email de confirmación</li>
                     <li>• Te contactaremos para coordinar el pago</li>
                     <li>• Te enviaremos los detalles del curso</li>
@@ -246,11 +228,11 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 pt-4">
+            <div className="enrollment-modal__buttons">
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+                className="enrollment-modal__btn enrollment-modal__btn--cancel"
                 disabled={loading}
               >
                 Cancelar
@@ -258,11 +240,11 @@ const CourseEnrollmentModal = ({ isOpen, onClose, onSubmit, course, loading }) =
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="enrollment-modal__btn enrollment-modal__btn--submit"
               >
                 {loading ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="enrollment-modal__spinner"></div>
                     Inscribiendo...
                   </>
                 ) : (

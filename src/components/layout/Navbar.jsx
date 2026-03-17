@@ -1,6 +1,6 @@
 // Navbar.jsx
 import React, { useState, useEffect } from "react";
-import { Menu, X, MessageCircle, User } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import NotificationBell from "../common/NotificationBell";
 import CartIcon from "../cart/CartIcon";
@@ -132,18 +132,6 @@ const Navbar = () => {
             <MessageCircle className="w-5 h-5" />
             Agendar Cita
           </a>
-
-          {/* LOGIN MOBILE */}
-          <button
-            onClick={() => {
-              navigateWithScroll("/login");
-              setIsOpen(false);
-            }}
-            className="mobile-nav-link flex items-center justify-center gap-2 mt-2"
-          >
-            <User size={20} />
-            Acceso Admin
-          </button>
         </div>
       </div>
 
